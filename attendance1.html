@@ -2,20 +2,23 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Teacher Attendance Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Attendance Form with Persistent Login</title>
     <style>
       body {
         font-family: Arial, sans-serif;
-        margin: 40px;
+        margin: 40px 10px;
         background-color: #f4f4f4;
       }
       .container {
         background: white;
         padding: 20px;
+        width: 100%;
         max-width: 600px;
-        margin: auto;
+        margin: 20px auto;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
       }
       h2 {
         text-align: center;
@@ -49,6 +52,12 @@
         background-color: #cccccc;
         cursor: not-allowed;
       }
+      #clearBtn {
+        background-color: #f44336;
+      }
+      #clearBtn:hover {
+        background-color: #d32f2f;
+      }
       .output {
         margin-top: 20px;
         background: #e8f5e9;
@@ -68,11 +77,29 @@
         background: #e8f5e9;
         color: #2e7d32;
       }
+
+      iframe {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        display: block;
+      }
     </style>
   </head>
-
   <body>
-    <div class="container">
+    <!-- Password Prompt -->
+    <div id="passwordPrompt" class="container" style="display:none;">
+      <h2>Enter Password</h2>
+      <input type="password" id="passwordInput" placeholder="Enter password" />
+      <button onclick="checkPassword()">Enter</button>
+      <div id="passwordError" style="color: red; display: none; margin-top: 10px;">
+        Incorrect password. Try again.
+      </div>
+    </div>
+
+    <!-- Attendance Form Container -->
+    <div class="container" id="formContainer" style="display:none;">
       <h2>Teacher Attendance Form</h2>
       <form id="attendanceForm">
         <label for="englishDate">Date (English):</label>
@@ -93,21 +120,65 @@
         <input type="text" id="subject" readonly required />
 
         <label for="classIn">Class In Time:</label>
-        <input type="time" id="classIn" required />
+        <input type="time" id="classIn" />
 
         <label for="classOut">Class Out Time:</label>
-        <input type="time" id="classOut" required />
+        <input type="time" id="classOut" />
 
         <label for="notes">Notes:</label>
         <input type="text" id="notes" />
 
         <button type="submit" id="submitBtn">Submit Attendance</button>
+        <button type="button" id="clearBtn">Clear Saved Data & Logout</button>
       </form>
 
       <div class="output" id="output"></div>
+
+      <!-- Embedded Google Sheet -->
+      <div style="margin: 20px auto; overflow-x: auto;">
+        <iframe
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTT9TKLMcFr1bws9B-bJn93AitVw6kPmPv5avAFdMI65MlvI40xvaBIc57wGOLenr6KLayRtsihWhXS/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false"
+          height="350"
+          allowfullscreen>
+        </iframe>
+      </div>
     </div>
 
     <script>
+      // Password protection and login state handling
+      function checkPassword() {
+        const input = document.getElementById("passwordInput").value.trim();
+        if (input === "1234") {
+          localStorage.setItem("isLoggedIn", "true");
+          showForm();
+          document.getElementById("passwordError").style.display = "none";
+        } else {
+          document.getElementById("passwordError").style.display = "block";
+        }
+      }
+
+      function showForm() {
+        document.getElementById("passwordPrompt").style.display = "none";
+        document.getElementById("formContainer").style.display = "block";
+        loadSavedData();
+      }
+
+      function showPasswordPrompt() {
+        document.getElementById("formContainer").style.display = "none";
+        document.getElementById("passwordPrompt").style.display = "block";
+        document.getElementById("passwordInput").value = "";
+        document.getElementById("passwordError").style.display = "none";
+      }
+
+      window.addEventListener("load", () => {
+        const loggedIn = localStorage.getItem("isLoggedIn");
+        if (loggedIn === "true") {
+          showForm();
+        } else {
+          showPasswordPrompt();
+        }
+      });
+
       const teacherSubjectMap = {
         "Harihar Poudel": "Data Base Management System",
         "Sudip Poudel": "System Analyst & Design",
@@ -117,136 +188,150 @@
         "Prem G.C": "Leadership Skills",
       };
 
-      // Set default date to today
-      document.getElementById("englishDate").value = new Date().toISOString().split('T')[0];
+      function setTodayDate() {
+        document.getElementById("englishDate").value = new Date().toISOString().split("T")[0];
+      }
 
-      document
-        .getElementById("teacher")
-        .addEventListener("change", function () {
-          const subject = teacherSubjectMap[this.value] || "";
-          document.getElementById("subject").value = subject;
-        });
+      setTodayDate();
 
-      // Validate time inputs
+      document.getElementById("teacher").addEventListener("change", function () {
+        const subject = teacherSubjectMap[this.value] || "";
+        document.getElementById("subject").value = subject;
+        saveData();
+      });
+
+      function saveData() {
+        const data = {
+          englishDate: document.getElementById("englishDate").value,
+          teacher: document.getElementById("teacher").value,
+          subject: document.getElementById("subject").value,
+          classIn: document.getElementById("classIn").value,
+          classOut: document.getElementById("classOut").value,
+          notes: document.getElementById("notes").value,
+        };
+        localStorage.setItem("pendingAttendance", JSON.stringify(data));
+      }
+
+      function loadSavedData() {
+        const saved = localStorage.getItem("pendingAttendance");
+        if (saved) {
+          const data = JSON.parse(saved);
+          document.getElementById("englishDate").value = data.englishDate || new Date().toISOString().split("T")[0];
+          document.getElementById("teacher").value = data.teacher || "";
+          document.getElementById("subject").value = data.subject || "";
+          document.getElementById("classIn").value = data.classIn || "";
+          document.getElementById("classOut").value = data.classOut || "";
+          document.getElementById("notes").value = data.notes || "";
+          showOutput("📌 You have unsaved attendance. Please complete and submit.");
+        } else {
+          setTodayDate();
+        }
+      }
+
+      function formatTimeTo12Hour(timeStr) {
+        if (!timeStr) return "";
+        const [hour, minute] = timeStr.split(":");
+        const h = parseInt(hour);
+        const ampm = h >= 12 ? "PM" : "AM";
+        const hour12 = h % 12 || 12;
+        return `${hour12}:${minute} ${ampm}`;
+      }
+
       function validateTimes(classIn, classOut) {
         if (!classIn || !classOut) return false;
-        
         const inTime = new Date(`1970-01-01T${classIn}:00`);
         const outTime = new Date(`1970-01-01T${classOut}:00`);
-        
         return outTime > inTime;
       }
 
-      // Show output message
       function showOutput(message, isError = false) {
         const output = document.getElementById("output");
         output.textContent = message;
-        output.className = `output show ${isError ? 'error' : 'success'}`;
+        output.className = `output show ${isError ? "error" : "success"}`;
       }
 
-      // Hide output message
       function hideOutput() {
-        document.getElementById("output").className = "output";
+        const output = document.getElementById("output");
+        output.className = "output";
+        output.textContent = "";
       }
 
-      document
-        .getElementById("attendanceForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-
-          const englishDate = document.getElementById("englishDate").value;
-          const teacher = document.getElementById("teacher").value;
-          const subject = document.getElementById("subject").value;
-          const classIn = document.getElementById("classIn").value;
-          const classOut = document.getElementById("classOut").value;
-          const notes = document.getElementById("notes").value;
-
-          // Validate times
-          if (!validateTimes(classIn, classOut)) {
-            showOutput("❌ Error: Class out time must be after class in time!", true);
-            return;
-          }
-
-          const inTime = new Date(`1970-01-01T${classIn}:00`);
-          const outTime = new Date(`1970-01-01T${classOut}:00`);
-          const duration = Math.round((outTime - inTime) / 60000); // Duration in minutes
-
-          const data = {
-            englishDate,
-            teacher,
-            subject,
-            classIn,
-            classOut,
-            duration,
-            notes,
-          };
-
-          // Disable submit button and show loading
-          const submitBtn = document.getElementById("submitBtn");
-          submitBtn.disabled = true;
-          submitBtn.textContent = "Submitting...";
-          showOutput("⏳ Submitting attendance data...");
-
-          // Updated Google Apps Script Web App URL
-          fetch("https://script.google.com/macros/s/AKfycbyUWG9EsvNDDQzaT4F9DpAiz9seXEEYWBZqzYDGD3FmGQ3E-zwKkzkZ2ZEHdHp01PI/exec", {
-              method: "POST",
-              mode: "no-cors", // Required for Google Apps Script
-              body: JSON.stringify(data),
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
-            .then(() => {
-              // With no-cors mode, we can't read the response, but if no error is thrown, assume success
-              showOutput("✅ Attendance saved to Google Sheet successfully!");
-              document.getElementById("attendanceForm").reset();
-              // Reset date to today after form reset
-              document.getElementById("englishDate").value = new Date().toISOString().split('T')[0];
-            })
-            .catch((err) => {
-              console.error("Error details:", err);
-              showOutput("❌ Error saving data. Please try again or contact administrator.", true);
-            })
-            .finally(() => {
-              // Re-enable submit button
-              submitBtn.disabled = false;
-              submitBtn.textContent = "Submit Attendance";
-            });
-        });
-
-      // Hide output when user starts typing again
-      document.getElementById("attendanceForm").addEventListener("input", function() {
+      document.getElementById("attendanceForm").addEventListener("input", () => {
+        saveData();
         if (document.getElementById("output").classList.contains("show")) {
-          setTimeout(hideOutput, 3000); // Hide after 3 seconds of new input
+          setTimeout(hideOutput, 3000);
         }
+      });
+
+      document.getElementById("attendanceForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const englishDate = document.getElementById("englishDate").value;
+        const teacher = document.getElementById("teacher").value;
+        const subject = document.getElementById("subject").value;
+        const classIn = document.getElementById("classIn").value;
+        const classOut = document.getElementById("classOut").value;
+        const notes = document.getElementById("notes").value;
+
+        if (!validateTimes(classIn, classOut)) {
+          showOutput("❌ Error: Class out time must be after class in time!", true);
+          return;
+        }
+
+        const inTime = new Date(`1970-01-01T${classIn}:00`);
+        const outTime = new Date(`1970-01-01T${classOut}:00`);
+        const duration = Math.round((outTime - inTime) / 60000);
+
+        const data = {
+          englishDate,
+          teacher,
+          subject,
+          classIn: formatTimeTo12Hour(classIn),
+          classOut: formatTimeTo12Hour(classOut),
+          duration: `${duration} min`,
+          notes,
+        };
+
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting...";
+        showOutput("⏳ Submitting attendance data...");
+
+        fetch(
+          "https://script.google.com/macros/s/AKfycbyUWG9EsvNDDQzaT4F9DpAiz9seXEEYWBZqzYDGD3FmGQ3E-zwKkzkZ2ZEHdHp01PI/exec",
+          {
+            method: "POST",
+            mode: "no-cors",
+            body: JSON.stringify(data),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+          .then(() => {
+            showOutput("✅ Attendance saved to Google Sheet successfully!");
+            document.getElementById("attendanceForm").reset();
+            setTodayDate();
+            localStorage.removeItem("pendingAttendance");
+          })
+          .catch((err) => {
+            console.error("Error details:", err);
+            showOutput("❌ Error saving data. Please try again or contact administrator.", true);
+          })
+          .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Submit Attendance";
+          });
+      });
+
+      document.getElementById("clearBtn").addEventListener("click", () => {
+        localStorage.removeItem("pendingAttendance");
+        localStorage.removeItem("isLoggedIn");
+        document.getElementById("attendanceForm").reset();
+        setTodayDate();
+        hideOutput();
+        showPasswordPrompt();
       });
     </script>
   </body>
-</html>
-
-
-<!-- function doPost(e) {
-  try {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    const data = JSON.parse(e.postData.contents);
-
-    sheet.appendRow([
-      data.englishDate,
-      data.teacher,
-      data.subject,
-      data.classIn,
-      data.classOut,
-      data.duration,
-      data.notes || "",
-    ]);
-
-    return ContentService.createTextOutput(
-      JSON.stringify({ result: 'success' })
-    ).setMimeType(ContentService.MimeType.JSON);
-
-  } catch (error) {
-    return ContentService.createTextOutput(
-      JSON.stringify({ result: 'error', message: error.message })
-    ).setMimeType(ContentService.MimeType.JSON);
-  }
-} -->
+  </html>
