@@ -1,9 +1,8 @@
 <!doctype html>
-
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Teacher Attendance Form</title>
+    <title>Teacher Attendance Form with Persistent Login</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -76,14 +75,25 @@
         color: #2e7d32;
       }
     </style>
-  </head>  
+  </head>
   <body>
-    <div class="container">
+    <!-- Password Prompt -->
+    <div id="passwordPrompt" class="container" style="display:none;">
+      <h2>Enter Password</h2>
+      <input type="password" id="passwordInput" placeholder="Enter password" />
+      <button onclick="checkPassword()">Enter</button>
+      <div id="passwordError" style="color: red; display: none; margin-top: 10px;">
+        Incorrect password. Try again.
+      </div>
+    </div>
+
+    <!-- Attendance Form Container -->
+    <div class="container" id="formContainer" style="display:none;">
       <h2>Teacher Attendance Form</h2>
       <form id="attendanceForm">
         <label for="englishDate">Date (English):</label>
         <input type="date" id="englishDate" required />
-        
+
         <label for="teacher">Teacher:</label>
         <select id="teacher" required>
           <option value="">--Select--</option>
@@ -108,13 +118,58 @@
         <input type="text" id="notes" />
 
         <button type="submit" id="submitBtn">Submit Attendance</button>
-        <button type="button" id="clearBtn">Clear Saved Data</button>
+        <button type="button" id="clearBtn">Clear Saved Data & Logout</button>
       </form>
 
       <div class="output" id="output"></div>
+
+      <!-- Embedded Google Sheet -->
+      <div style="max-width: 800px; margin: 20px auto; overflow-x: auto;">
+        <iframe
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTT9TKLMcFr1bws9B-bJn93AitVw6kPmPv5avAFdMI65MlvI40xvaBIc57wGOLenr6KLayRtsihWhXS/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false"
+          width="100%"
+          height="350"
+          style="border: 1px solid #ccc; border-radius: 8px; display: block;"
+          allowfullscreen>
+        </iframe>
+      </div>
     </div>
 
     <script>
+      // Password protection and login state handling
+      function checkPassword() {
+        const input = document.getElementById("passwordInput").value.trim();
+        if (input === "1234") {
+          localStorage.setItem("isLoggedIn", "true");
+          showForm();
+          document.getElementById("passwordError").style.display = "none";
+        } else {
+          document.getElementById("passwordError").style.display = "block";
+        }
+      }
+
+      function showForm() {
+        document.getElementById("passwordPrompt").style.display = "none";
+        document.getElementById("formContainer").style.display = "block";
+        loadSavedData();
+      }
+
+      function showPasswordPrompt() {
+        document.getElementById("formContainer").style.display = "none";
+        document.getElementById("passwordPrompt").style.display = "block";
+        document.getElementById("passwordInput").value = "";
+        document.getElementById("passwordError").style.display = "none";
+      }
+
+      window.addEventListener("load", () => {
+        const loggedIn = localStorage.getItem("isLoggedIn");
+        if (loggedIn === "true") {
+          showForm();
+        } else {
+          showPasswordPrompt();
+        }
+      });
+
       const teacherSubjectMap = {
         "Harihar Poudel": "Data Base Management System",
         "Sudip Poudel": "System Analyst & Design",
@@ -124,14 +179,54 @@
         "Prem G.C": "Leadership Skills",
       };
 
-      // Set default date to today
-      document.getElementById("englishDate").value = new Date().toISOString().split('T')[0];
+      function setTodayDate() {
+        document.getElementById("englishDate").value = new Date().toISOString().split("T")[0];
+      }
+
+      setTodayDate();
 
       document.getElementById("teacher").addEventListener("change", function () {
         const subject = teacherSubjectMap[this.value] || "";
         document.getElementById("subject").value = subject;
-        autoSaveAttendance(); // Save immediately when teacher changes (to save subject too)
+        saveData();
       });
+
+      function saveData() {
+        const data = {
+          englishDate: document.getElementById("englishDate").value,
+          teacher: document.getElementById("teacher").value,
+          subject: document.getElementById("subject").value,
+          classIn: document.getElementById("classIn").value,
+          classOut: document.getElementById("classOut").value,
+          notes: document.getElementById("notes").value,
+        };
+        localStorage.setItem("pendingAttendance", JSON.stringify(data));
+      }
+
+      function loadSavedData() {
+        const saved = localStorage.getItem("pendingAttendance");
+        if (saved) {
+          const data = JSON.parse(saved);
+          document.getElementById("englishDate").value = data.englishDate || new Date().toISOString().split("T")[0];
+          document.getElementById("teacher").value = data.teacher || "";
+          document.getElementById("subject").value = data.subject || "";
+          document.getElementById("classIn").value = data.classIn || "";
+          document.getElementById("classOut").value = data.classOut || "";
+          document.getElementById("notes").value = data.notes || "";
+          showOutput("📌 You have unsaved attendance. Please complete and submit.");
+        } else {
+          setTodayDate();
+        }
+      }
+
+      function formatTimeTo12Hour(timeStr) {
+        if (!timeStr) return "";
+        const [hour, minute] = timeStr.split(":");
+        const h = parseInt(hour);
+        const ampm = h >= 12 ? "PM" : "AM";
+        const hour12 = h % 12 || 12;
+        return `${hour12}:${minute} ${ampm}`;
+      }
 
       function validateTimes(classIn, classOut) {
         if (!classIn || !classOut) return false;
@@ -143,42 +238,22 @@
       function showOutput(message, isError = false) {
         const output = document.getElementById("output");
         output.textContent = message;
-        output.className = `output show ${isError ? 'error' : 'success'}`;
+        output.className = `output show ${isError ? "error" : "success"}`;
       }
 
       function hideOutput() {
-        document.getElementById("output").className = "output";
+        const output = document.getElementById("output");
+        output.className = "output";
+        output.textContent = "";
       }
 
-      // Auto-save function on any input change
-      function autoSaveAttendance() {
-        const englishDate = document.getElementById("englishDate").value;
-        const teacher = document.getElementById("teacher").value;
-        const subject = document.getElementById("subject").value;
-        const classIn = document.getElementById("classIn").value;
-        const classOut = document.getElementById("classOut").value;
-        const notes = document.getElementById("notes").value;
-
-        const data = { englishDate, teacher, subject, classIn, classOut, notes };
-        localStorage.setItem("pendingAttendance", JSON.stringify(data));
-      }
-
-      // Load saved data if exists
-      window.addEventListener("load", () => {
-        const saved = localStorage.getItem("pendingAttendance");
-        if (saved) {
-          const data = JSON.parse(saved);
-          document.getElementById("englishDate").value = data.englishDate || new Date().toISOString().split('T')[0];
-          document.getElementById("teacher").value = data.teacher || "";
-          document.getElementById("subject").value = data.subject || "";
-          document.getElementById("classIn").value = data.classIn || "";
-          document.getElementById("classOut").value = data.classOut || "";
-          document.getElementById("notes").value = data.notes || "";
-          showOutput("📌 You have unsaved attendance. Please complete and submit.");
+      document.getElementById("attendanceForm").addEventListener("input", () => {
+        saveData();
+        if (document.getElementById("output").classList.contains("show")) {
+          setTimeout(hideOutput, 3000);
         }
       });
 
-      // Submit attendance handler
       document.getElementById("attendanceForm").addEventListener("submit", function (e) {
         e.preventDefault();
 
@@ -202,9 +277,9 @@
           englishDate,
           teacher,
           subject,
-          classIn,
-          classOut,
-          duration,
+          classIn: formatTimeTo12Hour(classIn),
+          classOut: formatTimeTo12Hour(classOut),
+          duration: `${duration} min`,
           notes,
         };
 
@@ -213,18 +288,21 @@
         submitBtn.textContent = "Submitting...";
         showOutput("⏳ Submitting attendance data...");
 
-        fetch("https://script.google.com/macros/s/AKfycbyUWG9EsvNDDQzaT4F9DpAiz9seXEEYWBZqzYDGD3FmGQ3E-zwKkzkZ2ZEHdHp01PI/exec", {
-          method: "POST",
-          mode: "no-cors",
-          body: JSON.stringify(data),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+        fetch(
+          "https://script.google.com/macros/s/AKfycbyUWG9EsvNDDQzaT4F9DpAiz9seXEEYWBZqzYDGD3FmGQ3E-zwKkzkZ2ZEHdHp01PI/exec",
+          {
+            method: "POST",
+            mode: "no-cors",
+            body: JSON.stringify(data),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
           .then(() => {
             showOutput("✅ Attendance saved to Google Sheet successfully!");
             document.getElementById("attendanceForm").reset();
-            document.getElementById("englishDate").value = new Date().toISOString().split('T')[0];
+            setTodayDate();
             localStorage.removeItem("pendingAttendance");
           })
           .catch((err) => {
@@ -237,22 +315,13 @@
           });
       });
 
-      // Hide output message after typing
-      document.getElementById("attendanceForm").addEventListener("input", function () {
-        if (document.getElementById("output").classList.contains("show")) {
-          setTimeout(hideOutput, 3000);
-        }
-      });
-
-      // Attach auto-save on every input change
-      document.getElementById("attendanceForm").addEventListener("input", autoSaveAttendance);
-
-      // Clear saved data button logic
       document.getElementById("clearBtn").addEventListener("click", () => {
         localStorage.removeItem("pendingAttendance");
+        localStorage.removeItem("isLoggedIn");
         document.getElementById("attendanceForm").reset();
-        document.getElementById("englishDate").value = new Date().toISOString().split('T')[0];
-        showOutput("🗑️ Saved data cleared.");
+        setTodayDate();
+        hideOutput();
+        showPasswordPrompt();
       });
     </script>
   </body>
