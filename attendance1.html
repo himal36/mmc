@@ -1,0 +1,252 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Teacher Attendance Form</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        background-color: #f4f4f4;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        text-align: center;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        box-sizing: border-box;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px;
+        width: 100%;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+      .output {
+        margin-top: 20px;
+        background: #e8f5e9;
+        padding: 10px;
+        border-radius: 4px;
+        white-space: pre-wrap;
+        display: none;
+      }
+      .output.show {
+        display: block;
+      }
+      .error {
+        background: #ffebee;
+        color: #c62828;
+      }
+      .success {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>Teacher Attendance Form</h2>
+      <form id="attendanceForm">
+        <label for="englishDate">Date (English):</label>
+        <input type="date" id="englishDate" required />
+
+        <label for="teacher">Teacher:</label>
+        <select id="teacher" required>
+          <option value="">--Select--</option>
+          <option value="Harihar Poudel">Harihar Poudel</option>
+          <option value="Sudip Poudel">Sudip Poudel</option>
+          <option value="Hari Chhantyal">Hari Chhantyal</option>
+          <option value="Pashupatinath Dhakal">Pashupatinath Dhakal</option>
+          <option value="Debraj Sharma">Debraj Sharma</option>
+          <option value="Prem G.C">Prem G.C</option>
+        </select>
+
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" readonly required />
+
+        <label for="classIn">Class In Time:</label>
+        <input type="time" id="classIn" required />
+
+        <label for="classOut">Class Out Time:</label>
+        <input type="time" id="classOut" required />
+
+        <label for="notes">Notes:</label>
+        <input type="text" id="notes" />
+
+        <button type="submit" id="submitBtn">Submit Attendance</button>
+      </form>
+
+      <div class="output" id="output"></div>
+    </div>
+
+    <script>
+      const teacherSubjectMap = {
+        "Harihar Poudel": "Data Base Management System",
+        "Sudip Poudel": "System Analyst & Design",
+        "Hari Chhantyal": "Operating System",
+        "Pashupatinath Dhakal": "Fundamental of Curriculum",
+        "Debraj Sharma": "Numerical Analysis",
+        "Prem G.C": "Leadership Skills",
+      };
+
+      // Set default date to today
+      document.getElementById("englishDate").value = new Date().toISOString().split('T')[0];
+
+      document
+        .getElementById("teacher")
+        .addEventListener("change", function () {
+          const subject = teacherSubjectMap[this.value] || "";
+          document.getElementById("subject").value = subject;
+        });
+
+      // Validate time inputs
+      function validateTimes(classIn, classOut) {
+        if (!classIn || !classOut) return false;
+        
+        const inTime = new Date(`1970-01-01T${classIn}:00`);
+        const outTime = new Date(`1970-01-01T${classOut}:00`);
+        
+        return outTime > inTime;
+      }
+
+      // Show output message
+      function showOutput(message, isError = false) {
+        const output = document.getElementById("output");
+        output.textContent = message;
+        output.className = `output show ${isError ? 'error' : 'success'}`;
+      }
+
+      // Hide output message
+      function hideOutput() {
+        document.getElementById("output").className = "output";
+      }
+
+      document
+        .getElementById("attendanceForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const englishDate = document.getElementById("englishDate").value;
+          const teacher = document.getElementById("teacher").value;
+          const subject = document.getElementById("subject").value;
+          const classIn = document.getElementById("classIn").value;
+          const classOut = document.getElementById("classOut").value;
+          const notes = document.getElementById("notes").value;
+
+          // Validate times
+          if (!validateTimes(classIn, classOut)) {
+            showOutput("❌ Error: Class out time must be after class in time!", true);
+            return;
+          }
+
+          const inTime = new Date(`1970-01-01T${classIn}:00`);
+          const outTime = new Date(`1970-01-01T${classOut}:00`);
+          const duration = Math.round((outTime - inTime) / 60000); // Duration in minutes
+
+          const data = {
+            englishDate,
+            teacher,
+            subject,
+            classIn,
+            classOut,
+            duration,
+            notes,
+          };
+
+          // Disable submit button and show loading
+          const submitBtn = document.getElementById("submitBtn");
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Submitting...";
+          showOutput("⏳ Submitting attendance data...");
+
+          // Updated Google Apps Script Web App URL
+          fetch("https://script.google.com/macros/s/AKfycbyUWG9EsvNDDQzaT4F9DpAiz9seXEEYWBZqzYDGD3FmGQ3E-zwKkzkZ2ZEHdHp01PI/exec", {
+              method: "POST",
+              mode: "no-cors", // Required for Google Apps Script
+              body: JSON.stringify(data),
+              headers: {
+                "Content-Type": "application/json",
+              },
+            })
+            .then(() => {
+              // With no-cors mode, we can't read the response, but if no error is thrown, assume success
+              showOutput("✅ Attendance saved to Google Sheet successfully!");
+              document.getElementById("attendanceForm").reset();
+              // Reset date to today after form reset
+              document.getElementById("englishDate").value = new Date().toISOString().split('T')[0];
+            })
+            .catch((err) => {
+              console.error("Error details:", err);
+              showOutput("❌ Error saving data. Please try again or contact administrator.", true);
+            })
+            .finally(() => {
+              // Re-enable submit button
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Submit Attendance";
+            });
+        });
+
+      // Hide output when user starts typing again
+      document.getElementById("attendanceForm").addEventListener("input", function() {
+        if (document.getElementById("output").classList.contains("show")) {
+          setTimeout(hideOutput, 3000); // Hide after 3 seconds of new input
+        }
+      });
+    </script>
+  </body>
+</html>
+
+
+<!-- function doPost(e) {
+  try {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    const data = JSON.parse(e.postData.contents);
+
+    sheet.appendRow([
+      data.englishDate,
+      data.teacher,
+      data.subject,
+      data.classIn,
+      data.classOut,
+      data.duration,
+      data.notes || "",
+    ]);
+
+    return ContentService.createTextOutput(
+      JSON.stringify({ result: 'success' })
+    ).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return ContentService.createTextOutput(
+      JSON.stringify({ result: 'error', message: error.message })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+} -->
