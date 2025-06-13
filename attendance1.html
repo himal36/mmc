@@ -5,11 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teacher Attendance Form</title>
   <style>
+    * {margin:0;padding:0;box-sizing:border-box}
     body {
       font-family: Arial, sans-serif;
       margin: 40px 10px;
       background-color: #f4f4f4;
     }
+    
+    /* Login Styles */
+    .login-body {
+      background:linear-gradient(135deg,#4a90e2,#357abd 50%,#2c5282);
+      display:flex;justify-content:center;align-items:center;
+      height:100vh;
+      margin: 0;
+    }
+    .login-container {
+      width:400px;padding:40px;text-align:center;
+    }
+    .user-icon {
+      width:80px;height:80px;border:3px solid #fff;border-radius:50%;
+      margin:0 auto 30px;position:relative;
+    }
+    .user-icon::before,
+    .user-icon::after {
+      content:'';position:absolute;left:50%;transform:translateX(-50%);
+      background:transparent;border:3px solid #fff;
+    }
+    .user-icon::before {
+      top:15px;width:24px;height:24px;border-radius:50%;
+    }
+    .user-icon::after {
+      bottom:10px;width:45px;height:30px;border-radius:45px 45px 0 0;
+      border-bottom:none;
+    }
+    .login-title {color:#fff;font-size:28px;font-weight:normal;margin-bottom:40px}
+    .input-group {position:relative;margin-bottom:20px}
+    .input-field {
+      width:100%;padding:15px 15px 15px 50px;border:none;border-radius:5px;
+      font-size:16px;background:#fff;color:#999;
+    }
+    .input-field:focus {color:#333;outline:none}
+    .input-icon {
+      position:absolute;left:15px;top:50%;transform:translateY(-50%);
+      font-size:18px;color:#999;
+    }
+    .username-icon::before {content:'👤'}
+    .password-icon::before {content:'🔒'}
+    .options {
+      display:flex;justify-content:space-between;
+      align-items:center;color:#fff;font-size:14px;margin-bottom:30px;
+    }
+    .checkbox {margin-right:5px;width:15px;height:15px}
+    .forgot-password {color:#fff;text-decoration:none}
+    .forgot-password:hover {text-decoration:underline}
+    .login-btn {
+      width:100%;padding:18px;border:none;border-radius:5px;
+      font-size:18px;font-weight:bold;color:#fff;
+      background:linear-gradient(135deg,#ff8c42,#ff7733);
+      cursor:pointer;transition:background .3s;
+    }
+    .login-btn:hover {background:linear-gradient(135deg,#ff7733,#ff6624)}
+    .login-btn:active {transform:translateY(1px)}
+    .login-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .login-error {
+      color: #ff6b6b;
+      margin-top: 15px;
+      font-size: 14px;
+      display: none;
+    }
+
+    /* Attendance Form Styles */
     .container {
       background: white;
       padding: 20px;
@@ -86,13 +154,27 @@
 </head>
 <body>
 
-<!-- Password Login -->
-<div id="passwordPrompt" class="container" style="display:none;">
-  <h2>Enter Password</h2>
-  <input type="password" id="passwordInput" placeholder="Enter password" />
-  <button onclick="checkPassword()">Enter</button>
-  <div id="passwordError" style="color: red; display: none; margin-top: 10px;">
-    Incorrect password. Try again.
+<!-- New Login Page -->
+<div id="loginPage" class="login-body" style="display:none;">
+  <div class="login-container">
+    <div class="user-icon"></div>
+    <h1 class="login-title">Member Login</h1>
+    <form id="loginForm">
+      <div class="input-group">
+        <div class="input-icon username-icon"></div>
+        <input id="username" class="input-field" placeholder="Username">
+      </div>
+      <div class="input-group">
+        <div class="input-icon password-icon"></div>
+        <input id="password" type="password" class="input-field" placeholder="Password">
+      </div>
+      <div class="options">
+        <label><input id="rememberMe" type="checkbox" class="checkbox" checked>Remember me</label>
+        <a href="#" class="forgot-password">Forgot password?</a>
+      </div>
+      <button type="submit" class="login-btn">Login</button>
+      <div id="loginError" class="login-error"></div>
+    </form>
   </div>
 </div>
 
@@ -147,32 +229,75 @@
     "Harihar Poudel": "Data Base Management System",
     "Sudip Poudel": "System Analyst & Design",
     "Hari Chhantyal": "Operating System",
-    "Pashupatinath Dhakal": "Fundamental of Curriculum",
+    "Pashupatinath Dhakel": "Fundamental of Curriculum",
     "Debraj Sharma": "Numerical Analysis",
     "Prem G.C": "Leadership Skills",
   };
 
-  function checkPassword() {
-    const input = document.getElementById("passwordInput").value.trim();
-    if (input === "1234") {
-      localStorage.setItem("isLoggedIn", "true");
-      showForm();
-    } else {
-      document.getElementById("passwordError").style.display = "block";
+  // Login credentials
+  const users = { himal: 'bicte' };
+
+  // Login functionality
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const rememberMe = document.getElementById('rememberMe').checked;
+    const loginBtn = document.querySelector('.login-btn');
+    const loginError = document.getElementById('loginError');
+    
+    // Hide previous errors
+    loginError.style.display = 'none';
+    
+    if (!username || !password) {
+      showLoginError('Please enter both username and password');
+      return;
     }
+    
+    if (users[username] === password) {
+      loginBtn.textContent = 'Logging in...';
+      loginBtn.disabled = true;
+      
+      setTimeout(() => {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("currentUser", username);
+        if (rememberMe) {
+          localStorage.setItem("rememberUser", username);
+        }
+        showForm();
+        loginBtn.textContent = 'Login';
+        loginBtn.disabled = false;
+      }, 1000);
+    } else {
+      showLoginError('❌ Invalid username or password');
+    }
+  });
+
+  function showLoginError(message) {
+    const loginError = document.getElementById('loginError');
+    loginError.textContent = message;
+    loginError.style.display = 'block';
   }
 
   function showForm() {
-    document.getElementById("passwordPrompt").style.display = "none";
+    document.getElementById("loginPage").style.display = "none";
     document.getElementById("formContainer").style.display = "block";
+    document.body.style.background = "#f4f4f4";
+    document.body.classList.remove('login-body');
     loadSavedData();
   }
 
-  function showPasswordPrompt() {
+  function showLoginPage() {
     document.getElementById("formContainer").style.display = "none";
-    document.getElementById("passwordPrompt").style.display = "block";
-    document.getElementById("passwordInput").value = "";
-    document.getElementById("passwordError").style.display = "none";
+    document.getElementById("loginPage").style.display = "flex";
+    document.body.style.background = "linear-gradient(135deg,#4a90e2,#357abd 50%,#2c5282)";
+    document.body.classList.add('login-body');
+    
+    // Clear login form
+    document.getElementById("username").value = localStorage.getItem("rememberUser") || "";
+    document.getElementById("password").value = "";
+    document.getElementById("loginError").style.display = "none";
   }
 
   function setTodayDate() {
@@ -310,16 +435,21 @@
   document.getElementById("clearBtn").addEventListener("click", () => {
     localStorage.removeItem("pendingAttendance");
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("currentUser");
     document.getElementById("attendanceForm").reset();
     setTodayDate();
     document.getElementById("subjectDisplay").textContent = "";
     hideOutput();
-    showPasswordPrompt();
+    showLoginPage();
   });
 
   // Initial Load
   window.addEventListener("load", () => {
-    localStorage.getItem("isLoggedIn") === "true" ? showForm() : showPasswordPrompt();
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      showForm();
+    } else {
+      showLoginPage();
+    }
     setTodayDate();
   });
 </script>
