@@ -315,8 +315,7 @@
     document.getElementById("classIn").value = saved.classIn || "";
     document.getElementById("classOut").value = saved.classOut || "";
     document.getElementById("notes").value = saved.notes || "";
-    
-const subject = teacherSubjectMap[saved.teacher] || "";
+    const subject = teacherSubjectMap[saved.teacher] || "";
     document.getElementById("subjectDisplay").textContent = subject
       ? `📘 Subject: ${subject}` : "";
     if (saved.teacher) {
@@ -337,14 +336,6 @@ const subject = teacherSubjectMap[saved.teacher] || "";
       notes.value = "Present";
     }
   }
-document.getElementById("teacher").addEventListener("change", function () {
-  const teacher = this.value;
-  if (teacher) {
-    document.getElementById("notes").value = "Absent";
-  } else {
-    document.getElementById("notes").value = "";
-  }
-});
 
   document.getElementById("teacher").addEventListener("change", function () {
     document.getElementById("subjectDisplay").textContent =
