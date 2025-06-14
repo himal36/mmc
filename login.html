@@ -172,7 +172,7 @@
         <option value="Harihar Poudel">Harihar Poudel</option>
         <option value="Sudip Poudel">Sudip Poudel</option>
         <option value="Hari Chhantyal">Hari Chhantyal</option>
-        <option value="Pashupatinath Dhakel">Pashupatinath Dhakel</option>
+        <option value="Pashupatinath Dhakal">Pashupatinath Dhakal</option>
         <option value="Debraj Sharma">Debraj Sharma</option>
         <option value="Prem G.C">Prem G.C</option>
       </select>
@@ -208,7 +208,7 @@
       "Harihar Poudel": "Data Base Management System",
       "Sudip Poudel": "System Analyst & Design",
       "Hari Chhantyal": "Operating System",
-      "Pashupatinath Dhakel": "Fundamental of Curriculum",
+      "Pashupatinath Dhakal": "Fundamental of Curriculum",
       "Debraj Sharma": "Numerical Analysis",
       "Prem G.C": "Leadership Skills",
     };
@@ -422,6 +422,24 @@
       }
       setTodayDate();
     });
+    function updateAttendanceNote() {
+  const classIn = document.getElementById("classIn").value;
+  const classOut = document.getElementById("classOut").value;
+  const notesField = document.getElementById("notes");
+
+  if (classIn && classOut && validateTimes(classIn, classOut)) {
+    notesField.value = "Present";
+  } else {
+    notesField.value = "Absent";
+  }
+
+  saveData(); // keep local storage in sync
+}
+
+// Run on input
+document.getElementById("classIn").addEventListener("change", updateAttendanceNote);
+document.getElementById("classOut").addEventListener("change", updateAttendanceNote);
+
   </script>
 </body>
 </html>
