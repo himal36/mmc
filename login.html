@@ -179,10 +179,10 @@
       <div id="subjectDisplay"></div>
 
       <label for="classIn">Class In Time:</label>
-      <input type="time" id="classIn" />
+      <input type="time" id="classIn" required />
 
       <label for="classOut">Class Out Time:</label>
-      <input type="time" id="classOut" />
+      <input type="time" id="classOut" required />
 
       <label for="notes">Notes:</label>
       <input type="text" id="notes" />
@@ -202,213 +202,186 @@
       </iframe>
     </div>
   </div>
-<!-- ... your full existing HTML up to the <script> tag remains the same ... -->
 
-<script>
-  const teacherSubjectMap = {
-    "Harihar Poudel": "Data Base Management System",
-    "Sudip Poudel": "System Analyst & Design",
-    "Hari Chhantyal": "Operating System",
-    "Pashupatinath Dhakal": "Fundamental of Curriculum",
-    "Debraj Sharma": "Numerical Analysis",
-    "Prem G.C": "Leadership Skills",
-  };
+  <script>
+    const teacherSubjectMap = {
+      "Harihar Poudel": "Data Base Management System",
+      "Sudip Poudel": "System Analyst & Design",
+      "Hari Chhantyal": "Operating System",
+      "Pashupatinath Dhakal": "Fundamental of Curriculum",
+      "Debraj Sharma": "Numerical Analysis",
+      "Prem G.C": "Leadership Skills",
+    };
 
-  const users = { user: 'bicte' };
+    const users = { user: 'bicte' };
 
-  function showLoginError(message) {
-    const loginError = document.getElementById('loginError');
-    loginError.textContent = message;
-    loginError.style.display = 'block';
-  }
-
-  function showLoginPage() {
-    document.getElementById("formContainer").style.display = "none";
-    document.getElementById("loginPage").style.display = "flex";
-    document.body.style.background =
-      "linear-gradient(135deg,#4a90e2,#357abd 50%,#2c5282)";
-    document.body.classList.add('login-body');
-    document.getElementById("username").value =
-      localStorage.getItem("rememberUser") || "";
-    document.getElementById("password").value = "";
-    document.getElementById("loginError").style.display = "none";
-  }
-
-  function showForm() {
-    document.getElementById("loginPage").style.display = "none";
-    document.getElementById("formContainer").style.display = "block";
-    document.body.style.background = "#f4f4f4";
-    document.body.classList.remove('login-body');
-    loadSavedData();
-  }
-
-  document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
-    const rememberMe = document.getElementById('rememberMe').checked;
-    const loginBtn = document.querySelector('.login-btn');
-    document.getElementById('loginError').style.display = 'none';
-
-    if (!username || !password) {
-      showLoginError('Please enter both username and password');
-      return;
-    }
-    if (users[username] === password) {
-      loginBtn.textContent = 'Logging in...';
-      loginBtn.disabled = true;
-      setTimeout(() => {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("currentUser", username);
-        if (rememberMe) localStorage.setItem("rememberUser", username);
-        showForm();
-        loginBtn.textContent = 'Login';
-        loginBtn.disabled = false;
-      }, 1000);
-    } else {
-      showLoginError('❌ Invalid username or password');
-    }
-  });
-
-  function setTodayDate() {
-    document.getElementById("englishDate").value = new Date()
-      .toISOString()
-      .split("T")[0];
-  }
-
-  function showOutput(msg, isError = false) {
-    const output = document.getElementById("output");
-    output.textContent = msg;
-    output.className = `output show ${isError ? "error" : "success"}`;
-  }
-
-  function hideOutput() {
-    const output = document.getElementById("output");
-    output.className = "output";
-    output.textContent = "";
-  }
-
-  function formatTimeTo12Hour(timeStr) {
-    const [hour, minute] = timeStr.split(":");
-    const h = parseInt(hour);
-    return `${h % 12 || 12}:${minute} ${h >= 12 ? "PM" : "AM"}`;
-  }
-
-  function saveData() {
-    localStorage.setItem(
-      "pendingAttendance",
-      JSON.stringify({
-        englishDate: document.getElementById("englishDate").value,
-        teacher: document.getElementById("teacher").value,
-        classIn: document.getElementById("classIn").value,
-        classOut: document.getElementById("classOut").value,
-        notes: document.getElementById("notes").value,
-      })
-    );
-  }
-
-  function loadSavedData() {
-    const saved = JSON.parse(localStorage.getItem("pendingAttendance") || "{}");
-    document.getElementById("englishDate").value =
-      saved.englishDate || new Date().toISOString().split("T")[0];
-    document.getElementById("teacher").value = saved.teacher || "";
-    document.getElementById("classIn").value = saved.classIn || "";
-    document.getElementById("classOut").value = saved.classOut || "";
-    document.getElementById("notes").value = saved.notes || "";
-    const subject = teacherSubjectMap[saved.teacher] || "";
-    document.getElementById("subjectDisplay").textContent = subject
-      ? `📘 Subject: ${subject}` : "";
-    if (saved.teacher) {
-      showOutput("📌 You have unsaved attendance. Please submit.");
-    }
-  }
-
-  // ✅ Auto-fill notes based on time inputs
-  function autoSetNotes() {
-    const teacher = document.getElementById("teacher").value;
-    const inT = document.getElementById("classIn").value;
-    const outT = document.getElementById("classOut").value;
-    const notes = document.getElementById("notes");
-
-    if (teacher && (!inT || !outT)) {
-      notes.value = "Absent";
-    } else if (teacher && inT && outT) {
-      notes.value = "Present";
-    }
-  }
-
-  document.getElementById("teacher").addEventListener("change", function () {
-    document.getElementById("subjectDisplay").textContent =
-      this.value ? `📘 Subject: ${teacherSubjectMap[this.value]}` : "";
-    autoSetNotes(); // ✅
-    saveData();
-  });
-
-  document.getElementById("classIn").addEventListener("input", autoSetNotes);
-  document.getElementById("classOut").addEventListener("input", autoSetNotes);
-
-  document.getElementById("attendanceForm").addEventListener("input", () => {
-    saveData();
-    if (document.getElementById("output").classList.contains("show")) {
-      setTimeout(hideOutput, 2000);
-    }
-  });
-
-  let isSubmitting = false;
-
-  document.getElementById("attendanceForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    if (isSubmitting) return;
-
-    const inT = document.getElementById("classIn").value;
-    const outT = document.getElementById("classOut").value;
-    const teacher = document.getElementById("teacher").value;
-    const notes = document.getElementById("notes").value;
-
-    // ✅ Allow submission without times, but warn if teacher not selected
-    if (!teacher) {
-      showOutput("❌ Please select a teacher.", true);
-      return;
+    function showLoginError(message) {
+      const loginError = document.getElementById('loginError');
+      loginError.textContent = message;
+      loginError.style.display = 'block';
     }
 
-    let duration = "";
-    let classInFormatted = "";
-    let classOutFormatted = "";
+    function showLoginPage() {
+      document.getElementById("formContainer").style.display = "none";
+      document.getElementById("loginPage").style.display = "flex";
+      document.body.style.background =
+        "linear-gradient(135deg,#4a90e2,#357abd 50%,#2c5282)";
+      document.body.classList.add('login-body');
+      document.getElementById("username").value =
+        localStorage.getItem("rememberUser") || "";
+      document.getElementById("password").value = "";
+      document.getElementById("loginError").style.display = "none";
+    }
 
-    if (inT && outT) {
-      if (new Date(`1970-01-01T${outT}`) <= new Date(`1970-01-01T${inT}`)) {
+    function showForm() {
+      document.getElementById("loginPage").style.display = "none";
+      document.getElementById("formContainer").style.display = "block";
+      document.body.style.background = "#f4f4f4";
+      document.body.classList.remove('login-body');
+      loadSavedData();
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const rememberMe = document.getElementById('rememberMe').checked;
+      const loginBtn = document.querySelector('.login-btn');
+      document.getElementById('loginError').style.display = 'none';
+
+      if (!username || !password) {
+        showLoginError('Please enter both username and password');
+        return;
+      }
+      if (users[username] === password) {
+        loginBtn.textContent = 'Logging in...';
+        loginBtn.disabled = true;
+        setTimeout(() => {
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("currentUser", username);
+          if (rememberMe) localStorage.setItem("rememberUser", username);
+          showForm();
+          loginBtn.textContent = 'Login';
+          loginBtn.disabled = false;
+        }, 1000);
+      } else {
+        showLoginError('❌ Invalid username or password');
+      }
+    });
+
+    function setTodayDate() {
+      document.getElementById("englishDate").value = new Date()
+        .toISOString()
+        .split("T")[0];
+    }
+
+    function showOutput(msg, isError = false) {
+      const output = document.getElementById("output");
+      output.textContent = msg;
+      output.className = `output show ${isError ? "error" : "success"}`;
+    }
+
+    function hideOutput() {
+      const output = document.getElementById("output");
+      output.className = "output";
+      output.textContent = "";
+    }
+
+    function formatTimeTo12Hour(timeStr) {
+      const [hour, minute] = timeStr.split(":");
+      const h = parseInt(hour);
+      return `${h % 12 || 12}:${minute} ${h >= 12 ? "PM" : "AM"}`;
+    }
+
+    function validateTimes(start, end) {
+      return Boolean(start && end && new Date(
+        `1970-01-01T${end}`) > new Date(`1970-01-01T${start}`)
+      );
+    }
+
+    function saveData() {
+      localStorage.setItem(
+        "pendingAttendance",
+        JSON.stringify({
+          englishDate: document.getElementById("englishDate").value,
+          teacher: document.getElementById("teacher").value,
+          classIn: document.getElementById("classIn").value,
+          classOut: document.getElementById("classOut").value,
+          notes: document.getElementById("notes").value,
+        })
+      );
+    }
+
+    function loadSavedData() {
+      const saved = JSON.parse(
+        localStorage.getItem("pendingAttendance") || "{}"
+      );
+      document.getElementById("englishDate").value =
+        saved.englishDate || new Date().toISOString().split("T")[0];
+      document.getElementById("teacher").value = saved.teacher || "";
+      document.getElementById("classIn").value = saved.classIn || "";
+      document.getElementById("classOut").value = saved.classOut || "";
+      document.getElementById("notes").value = saved.notes || "";
+      const subject = teacherSubjectMap[saved.teacher] || "";
+      document.getElementById("subjectDisplay").textContent = subject
+        ? `📘 Subject: ${subject}` : "";
+      if (saved.teacher) {
+        showOutput("📌 You have unsaved attendance. Please submit.");
+      }
+    }
+
+    document.getElementById("teacher").addEventListener("change", function() {
+      document.getElementById("subjectDisplay").textContent =
+        this.value ? `📘 Subject: ${teacherSubjectMap[this.value]}` : "";
+      saveData();
+    });
+
+    document.getElementById("attendanceForm").addEventListener("input", () => {
+      saveData();
+      if (document.getElementById("output").classList.contains("show")) {
+        setTimeout(hideOutput, 2000);
+      }
+    });
+
+    let isSubmitting = false;
+
+    document.getElementById("attendanceForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (isSubmitting) return;
+
+      const inT = document.getElementById("classIn").value;
+      const outT = document.getElementById("classOut").value;
+      if (!validateTimes(inT, outT)) {
         showOutput("❌ Class out time must be after class in time!", true);
         return;
       }
-      classInFormatted = formatTimeTo12Hour(inT);
-      classOutFormatted = formatTimeTo12Hour(outT);
-      duration = `${Math.round(
-        (new Date(`1970-01-01T${outT}`) - new Date(`1970-01-01T${inT}`)) / 60000
-      )} min`;
-    }
 
-    const data = {
-      englishDate: document.getElementById("englishDate").value,
-      teacher,
-      subject: teacherSubjectMap[teacher] || "",
-      classIn: classInFormatted,
-      classOut: classOutFormatted,
-      duration,
-      notes,
-    };
+      const data = {
+        englishDate: document.getElementById("englishDate").value,
+        teacher: document.getElementById("teacher").value,
+        subject: teacherSubjectMap[document.getElementById("teacher").value] || "",
+        classIn: formatTimeTo12Hour(inT),
+        classOut: formatTimeTo12Hour(outT),
+        duration: `${Math.round(
+          (new Date(`1970-01-01T${outT}`) -
+           new Date(`1970-01-01T${inT}`)) /
+          60000
+        )} min`,
+        notes: document.getElementById("notes").value,
+      };
 
-    const submitBtn = document.getElementById("submitBtn");
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Submitting...";
-    isSubmitting = true;
-    showOutput("⏳ Submitting attendance...");
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting...";
+      isSubmitting = true;
+      showOutput("⏳ Submitting attendance...");
 
-    fetch("https://script.google.com/macros/s/AKfycbyUWG9EsvNDDQzaT4F9DpAiz9seXEEYWBZqzYDGD3FmGQ3E-zwKkzkZ2ZEHdHp01PI/exec", {
-      method: "POST",
-      mode: "no-cors",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    })
+      fetch("https://script.google.com/macros/s/AKfycbyUWG9EsvNDDQzaT4F9DpAiz9seXEEYWBZqzYDGD3FmGQ3E-zwKkzkZ2ZEHdHp01PI/exec", {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+      })
       .then(() => {
         showOutput("✅ Attendance saved successfully!");
         document.getElementById("attendanceForm").reset();
@@ -416,6 +389,7 @@
         setTodayDate();
         localStorage.removeItem("pendingAttendance");
 
+        // 🔁 Force-refresh embed by adding timestamp query
         const iframe = document.getElementById("sheetFrame");
         const base = iframe.src.split('?')[0];
         iframe.src = `${base}?timestamp=${new Date().getTime()}`;
@@ -429,17 +403,43 @@
         submitBtn.textContent = "Submit Attendance";
         isSubmitting = false;
       });
-  });
+    });
 
-  document.getElementById("clearBtn").addEventListener("click", () => {
-    localStorage.clear();
-    document.getElementById("attendanceForm").reset();
-    setTodayDate();
-    document.getElementById("subjectDisplay").textContent = "";
-    hideOutput();
-    showLoginPage();
-  });
-</script>
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      localStorage.clear();
+      document.getElementById("attendanceForm").reset();
+      setTodayDate();
+      document.getElementById("subjectDisplay").textContent = "";
+      hideOutput();
+      showLoginPage();
+    });
 
+    window.addEventListener("load", () => {
+      if (localStorage.getItem("isLoggedIn") === "true") {
+        showForm();
+      } else {
+        showLoginPage();
+      }
+      setTodayDate();
+    });
+    function updateAttendanceNote() {
+  const classIn = document.getElementById("classIn").value;
+  const classOut = document.getElementById("classOut").value;
+  const notesField = document.getElementById("notes");
+
+  if (classIn && classOut && validateTimes(classIn, classOut)) {
+    notesField.value = "Present";
+  } else {
+    notesField.value = "Absent";
+  }
+
+  saveData(); // keep local storage in sync
+}
+
+// Run on input
+document.getElementById("classIn").addEventListener("change", updateAttendanceNote);
+document.getElementById("classOut").addEventListener("change", updateAttendanceNote);
+
+  </script>
 </body>
 </html>
