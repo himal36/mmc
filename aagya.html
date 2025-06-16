@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aagya Diary - YouTube Vlogger</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    /* Header Styles */
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: #ff6b6b;
+      transform: translateY(-2px);
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #ff6b6b;
+      border-radius: 2px;
+    }
+
+    .mobile-menu {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Hero Section */
+    .hero {
+      margin-top: 80px;
+      padding: 4rem 2rem;
+      text-align: center;
+      color: white;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .profile-image {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      margin: 0 auto 2rem;
+      object-fit: cover;
+      animation: float 6s ease-in-out infinite;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .subscribe-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(45deg, #ff0000, #cc0000);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(255, 0, 0, 0.3);
+    }
+
+    .subscribe-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(255, 0, 0, 0.4);
+    }
+
+    /* Main Content */
+    .main-content {
+      background: white;
+      border-radius: 20px 20px 0 0;
+      margin-top: 2rem;
+      min-height: 100vh;
+      padding: 3rem 2rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Video Grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .video-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .video-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    .video-thumbnail {
+      position: relative;
+      padding-bottom: 56.25%;
+      overflow: hidden;
+    }
+
+    .video-thumbnail iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-info {
+      padding: 1.5rem;
+    }
+
+    .video-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    .video-stats {
+      display: flex;
+      gap: 1rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    /* Side Scrolling Videos */
+    .scroll-section {
+      margin: 4rem 0;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      color: #333;
+    }
+
+    .horizontal-scroll {
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+      padding: 1rem 0;
+      scroll-behavior: smooth;
+    }
+
+    .horizontal-scroll::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .horizontal-scroll::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .horizontal-scroll::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    .horizontal-scroll::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    .mini-video-card {
+      flex: 0 0 300px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .mini-video-card:hover {
+      transform: scale(1.05);
+    }
+
+    .mini-thumbnail {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    /* Stats Section */
+    .stats-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 4rem 2rem;
+      text-align: center;
+      margin: 4rem 0;
+      border-radius: 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* Footer */
+    .footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .social-links a {
+      color: white;
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: #ff6b6b;
+      transform: translateY(-3px);
+    }
+
+    /* Loading Animation */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: 80px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 80px);
+        background: rgba(0, 0, 0, 0.9);
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-top: 2rem;
+        transition: left 0.3s ease;
+      }
+
+      .nav-links.active {
+        left: 0;
+      }
+
+      .mobile-menu {
+        display: block;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .profile-image {
+        width: 150px;
+        height: 150px;
+      }
+
+      .video-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-video-card {
+        flex: 0 0 250px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stat-number {
+        font-size: 2rem;
+      }
+    }
+
+    /* Content Sections */
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .about-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .about-content h2 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: #333;
+    }
+
+    .about-content p {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      color: #666;
+    }
+
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 2rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .submit-btn {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <i class="fas fa-video"></i>
+        Aagya Diary
+      </a>
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#" data-section="home" class="nav-link active">Home</a></li>
+          <li><a href="#" data-section="videos" class="nav-link">Videos</a></li>
+          <li><a href="#" data-section="about" class="nav-link">About</a></li>
+          <li><a href="#" data-section="contact" class="nav-link">Contact</a></li>
+        </ul>
+        <button class="mobile-menu" id="mobileMenu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <img src="https://yt3.googleusercontent.com/Y5HjPtrihDfjzTuaEEeUNLndfBlGWynk8BnLLJU273AVLYG9G7sglSO3WVBYKVkgCT03WIvlMKs=s160-c-k-c0x00ffffff-no-rj" alt="Aagya's Profile" class="profile-image" />
+      <h1>Hi, I'm Aagya! 👋</h1>
+      <p>Nepali vlogger sharing my journey through college life, culture, and creativity. Join me on this amazing adventure!</p>
+      <a href="https://www.youtube.com/@aagyadiary6283?sub_confirmation=1" target="_blank" class="subscribe-btn">
+        <i class="fab fa-youtube"></i>
+        Subscribe on YouTube
+      </a>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- Home Section -->
+      <section id="home" class="content-section active">
+        <!-- Featured Video -->
+        <div class="video-grid">
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <iframe src="https://www.youtube.com/embed/6vj1kl2QeWs" title="Featured Video" allowfullscreen></iframe>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">Latest Vlog - College Life Adventures</h3>
+              <div class="video-stats">
+                <span><i class="fas fa-eye"></i> 12K views</span>
+                <span><i class="fas fa-thumbs-up"></i> 892 likes</span>
+                <span><i class="fas fa-calendar"></i> 2 days ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+          <h2>Channel Statistics</h2>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-number" id="subscriberCount">2.5K</div>
+              <div class="stat-label">Subscribers</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="videoCount">45</div>
+              <div class="stat-label">Videos</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="viewCount">125K</div>
+              <div class="stat-label">Total Views</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number" id="likeCount">8.2K</div>
+              <div class="stat-label">Total Likes</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side Scrolling Recent Videos -->
+        <div class="scroll-section">
+          <h2 class="section-title">Recent Videos</h2>
+          <div class="horizontal-scroll" id="recentVideos">
+            <div class="loading">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Videos Section -->
+      <section id="videos" class="content-section">
+        <h2 class="section-title">All Videos</h2>
+        <div class="video-grid" id="videoGrid">
+          <div class="loading">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section id="about" class="content-section">
+        <div class="about-content">
+          <h2>About Aagya</h2>
+          <p>Hello! I'm Aagya, a passionate content creator from Nepal. Through my vlogs, I share glimpses of my daily life, college experiences, cultural insights, and creative projects.</p>
+          <p>My journey started with a simple desire to document life's beautiful moments and connect with people who share similar interests. What began as a hobby has grown into a community of amazing viewers who inspire me every day.</p>
+          <p>When I'm not creating content, you can find me exploring new places, trying local foods, studying, or hanging out with friends. I believe in authentic storytelling and love showing the real, unfiltered side of life.</p>
+          <p>Thank you for being part of this incredible journey. Your support means the world to me! 💖</p>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section id="contact" class="content-section">
+        <h2 class="section-title">Get in Touch</h2>
+        <form class="contact-form" id="contactForm">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" required>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="social-links">
+      <a href="https://www.youtube.com/@aagyadiary6283" target="_blank">
+        <i class="fab fa-youtube"></i>
+      </a>
+      <a href="#" target="_blank">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="#" target="_blank">
+        <i class="fab fa-tiktok"></i>
+      </a>
+      <a href="#" target="_blank">
+        <i class="fab fa-facebook"></i>
+      </a>
+    </div>
+    <p>&copy; 2025 Aagya Diary. All rights reserved. Made with 💖</p>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const mobileMenu = document.getElementById('mobileMenu');
+    const navLinks = document.getElementById('navLinks');
+
+    mobileMenu.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    // Navigation functionality
+    const navLinksElements = document.querySelectorAll('.nav-link');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    navLinksElements.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // Remove active class from all links
+        navLinksElements.forEach(l => l.classList.remove('active'));
+        // Add active class to clicked link
+        link.classList.add('active');
+        
+        // Hide all sections
+        contentSections.forEach(section => section.classList.remove('active'));
+        // Show target section
+        const targetSection = link.getAttribute('data-section');
+        document.getElementById(targetSection).classList.add('active');
+        
+        // Close mobile menu
+        navLinks.classList.remove('active');
+      });
+    });
+
+    // Simulate loading videos with dummy data
+    function loadRecentVideos() {
+      const recentVideos = document.getElementById('recentVideos');
+      const videos = [
+        { title: "College Morning Routine", thumbnail: "https://img.youtube.com/vi/6vj1kl2QeWs/maxresdefault.jpg" },
+        { title: "Nepali Food Challenge", thumbnail: "https://img.youtube.com/vi/6vj1kl2QeWs/maxresdefault.jpg" },
+        { title: "Study Vlog", thumbnail: "https://img.youtube.com/vi/6vj1kl2QeWs/maxresdefault.jpg" },
+        { title: "Cultural Festival", thumbnail: "https://img.youtube.com/vi/6vj1kl2QeWs/maxresdefault.jpg" },
+        { title: "Room Tour", thumbnail: "https://img.youtube.com/vi/6vj1kl2QeWs/maxresdefault.jpg" }
+      ];
+
+      setTimeout(() => {
+        recentVideos.innerHTML = videos.map(video => `
+          <div class="mini-video-card">
+            <img src="${video.thumbnail}" alt="${video.title}" class="mini-thumbnail">
+            <div style="padding: 1rem;">
+              <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem;">${video.title}</h4>
+              <p style="color: #666; font-size: 0.8rem;">2 days ago • 5.2K views</p>
+            </div>
+          </div>
+        `).join('');
+      }, 1500);
+    }
+
+    function loadAllVideos() {
+      const videoGrid = document.getElementById('videoGrid');
+      const videos = [
+        { id: "6vj1kl2QeWs", title: "College Life Adventures", views: "12K", likes: "892" },
+        { id: "6vj1kl2QeWs", title: "Nepali Food Challenge", views: "8.5K", likes: "654" },
+        { id: "6vj1kl2QeWs", title: "Study Vlog Session", views: "15K", likes: "1.2K" },
+        { id: "6vj1kl2QeWs", title: "Cultural Festival Vlog", views: "20K", likes: "1.8K" },
+        { id: "6vj1kl2QeWs", title: "Room Tour & Decor", views: "11K", likes: "743" },
+        { id: "6vj1kl2QeWs", title: "Weekend Adventures", views: "9.2K", likes: "567" }
+      ];
+
+      setTimeout(() => {
+        videoGrid.innerHTML = videos.map(video => `
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <iframe src="https://www.youtube.com/embed/${video.id}" title="${video.title}" allowfullscreen></iframe>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">${video.title}</h3>
+              <div class="video-stats">
+                <span><i class="fas fa-eye"></i> ${video.views} views</span>
+                <span><i class="fas fa-thumbs-up"></i> ${video.likes} likes</span>
+                <span><i class="fas fa-calendar"></i> 5 days ago</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }, 1000);
+    }
+
+    // Contact form handler
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Thank you for your message! I\'ll get back to you soon. 💖');
+      e.target.reset();
+    });
+
+    // Animate statistics on scroll
+    function animateStats() {
+      const stats = [
+        { element: 'subscriberCount', target: 2500, suffix: 'K' },
+        { element: 'videoCount', target: 45, suffix: '' },
+        { element: 'viewCount', target: 125, suffix: 'K' },
+        { element: 'likeCount', target: 8200, suffix: '' }
+      ];
+
+      stats.forEach(stat => {
+        const element = document.getElementById(stat.element);
+        let current = 0;
+        const increment = stat.target / 50;
+        
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= stat.target) {
+            current = stat.target;
+            clearInterval(timer);
+          }
+          
+          let displayValue = Math.floor(current);
+          if (stat.suffix === 'K' && stat.target >= 1000) {
+            displayValue = (displayValue / 1000).toFixed(1) + 'K';
+          } else if (stat.suffix === '') {
+            displayValue = displayValue.toLocaleString();
+          }
+          
+          element.textContent = displayValue;
+        }, 50);
+      });
+    }
+
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('.header');
+      if (window.scrollY > 100) {
+        header.style.background = 'rgba(0, 0, 0, 0.9)';
+      } else {
+        header.style.background = 'rgba(255, 255, 255, 0.1)';
+      }
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      loadRecentVideos();
+      loadAllVideos();
+      setTimeout(animateStats, 500);
+    });
+
+    // Subscribe button with enhanced feedback
+    document.querySelector('.subscribe-btn').addEventListener('click', () => {
+      // Create a temporary success message
+      const btn = document.querySelector('.subscribe-btn');
+      const originalText = btn.innerHTML;
+      
+      btn.innerHTML = '<i class="fas fa-check"></i> Thanks for subscribing! 💖';
+      btn.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
+      
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.style.background = 'linear-gradient(45deg, #ff0000, #cc0000)';
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
