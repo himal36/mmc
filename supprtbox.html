@@ -1,221 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
-  <title>MMC · Suggestion Box</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --primary: #2563eb; --primary-dark: #1d4ed8; --primary-light: #dbeafe; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --light: #f8fafc; --dark: #1e293b; --gray: #64748b; --light-gray: #e2e8f0; --card-bg: #ffffff; --shadow: 0 4px 6px -1px rgba(0,0,0,0.06); --shadow-lg: 0 12px 20px -8px rgba(0,0,0,0.12); --radius: 14px; --transition: all 0.2s cubic-bezier(0.4,0,0.2,1); }
-    body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--dark); min-height: 100vh; padding: 14px; line-height: 1.5; }
-    .container { max-width: 1300px; margin: 0 auto; }
-    .header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; padding: 0.9rem 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem; box-shadow: var(--shadow); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem; }
-    .logo { display: flex; align-items: center; gap: 0.75rem; }
-    .logo-icon { background: rgba(255,255,255,0.15); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-    .logo-text h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.3px; }
-    .logo-text p { font-size: 0.7rem; opacity: 0.85; }
-    .login-section { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
-    .user-info { display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.12); padding: 0.15rem 0.7rem 0.15rem 0.15rem; border-radius: 40px; }
-    .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: #fff; color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
-    .user-name { font-weight: 600; font-size: 0.8rem; }
-    .user-email { font-size: 0.6rem; opacity: 0.8; }
-    .btn-header { padding: 0.3rem 0.9rem; border-radius: 40px; font-weight: 600; border: none; cursor: pointer; font-size: 0.75rem; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.3rem; }
-    .btn-login { background: #fff; color: var(--primary); }
-    .btn-login:hover { transform: scale(0.97); }
-    .btn-logout { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-    .btn-settings { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.15); }
-    .main-layout { display: grid; grid-template-columns: 1fr 1.6fr; gap: 1.5rem; }
-    @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } }
-    .card { background: var(--card-bg); border-radius: var(--radius); padding: 1.2rem; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.03); margin-bottom: 1.2rem; transition: var(--transition); }
-    .card-title { font-weight: 700; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; }
-    .card-title i { color: var(--primary); }
-    .form-group { margin-bottom: 0.9rem; }
-    .form-label { font-weight: 600; font-size: 0.8rem; display: block; margin-bottom: 0.2rem; }
-    .form-control { width: 100%; padding: 0.55rem 0.9rem; border: 2px solid var(--light-gray); border-radius: 10px; font-size: 0.85rem; transition: var(--transition); background: #fff; }
-    .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-    .form-textarea { min-height: 80px; resize: vertical; }
-    .select-wrapper { position: relative; }
-    .select-wrapper select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.9rem center; padding-right: 2.6rem; }
-    .btn { padding: 0.5rem 1.1rem; border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: var(--transition); border: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; }
-    .btn-primary { background: var(--primary); color: #fff; flex: 1; }
-    .btn-primary:hover:not(:disabled) { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
-    .btn-secondary { background: var(--light); color: var(--dark); border: 2px solid var(--light-gray); }
-    .btn-secondary:hover { background: var(--light-gray); }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-warning { background: var(--warning); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .form-actions { display: flex; gap: 0.7rem; margin-top: 0.8rem; }
-    .feed-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.6rem; margin-bottom: 0.9rem; }
-    .filter-controls { display: flex; gap: 0.25rem; flex-wrap: wrap; }
-    .filter-btn { padding: 0.2rem 0.8rem; background: var(--light); border: 2px solid transparent; border-radius: 30px; font-weight: 500; cursor: pointer; font-size: 0.7rem; transition: var(--transition); }
-    .filter-btn:hover { background: var(--primary-light); }
-    .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-    .display-control { display: flex; align-items: center; gap: 0.25rem; background: var(--light); padding: 0.1rem 0.5rem; border-radius: 30px; font-size: 0.7rem; }
-    .display-control select { border: 1px solid var(--light-gray); border-radius: 6px; padding: 0.05rem 0.2rem; background: #fff; font-size: 0.7rem; }
-    .suggestions-list { display: flex; flex-direction: column; gap: 0.8rem; }
-    .suggestion-card { background: var(--card-bg); border-radius: var(--radius); padding: 0.9rem 1.1rem; box-shadow: var(--shadow); border-left: 4px solid var(--primary); transition: var(--transition); }
-    .suggestion-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-    .suggestion-card.pending { border-left-color: var(--warning); }
-    .suggestion-card.approved { border-left-color: var(--success); }
-    .suggestion-card.implemented { border-left-color: #0ea5e9; }
-    .suggestion-card.rejected { border-left-color: var(--danger); }
-    .suggestion-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
-    .suggestion-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.1rem; }
-    .suggestion-content { color: var(--gray); font-size: 0.85rem; margin-bottom: 0.4rem; line-height: 1.5; }
-    .suggestion-details { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.7rem; color: var(--gray); margin-bottom: 0.4rem; }
-    .suggestion-details i { width: 14px; color: var(--primary); }
-    .status-badge { padding: 0.05rem 0.6rem; border-radius: 30px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2px; }
-    .status-badge.pending { background: #fef3c7; color: #b45309; }
-    .status-badge.approved { background: #d1fae5; color: #047857; }
-    .status-badge.implemented { background: #dbeafe; color: #1d4ed8; }
-    .status-badge.rejected { background: #fee2e2; color: #b91c1c; }
-    .private-badge { background: #9333ea; color: #fff; padding: 0.04rem 0.5rem; border-radius: 12px; font-size: 0.55rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.15rem; }
-    .suggestion-footer { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding-top: 0.5rem; border-top: 1px solid var(--light-gray); gap: 0.4rem; }
-    .suggestion-stats { display: flex; align-items: center; gap: 0.5rem; }
-    .vote-btn { background: none; border: none; color: var(--gray); cursor: pointer; padding: 0.05rem 0.3rem; border-radius: 6px; font-size: 0.75rem; display: flex; align-items: center; gap: 0.15rem; transition: var(--transition); }
-    .vote-btn:hover { color: var(--primary); background: var(--light); }
-    .vote-btn.voted { color: var(--primary); font-weight: 600; }
-    .vote-btn.disliked { color: var(--danger); font-weight: 600; }
-    .vote-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .admin-actions { display: flex; gap: 0.25rem; flex-wrap: wrap; }
-    .action-btn { padding: 0.1rem 0.5rem; border-radius: 6px; font-weight: 500; cursor: pointer; font-size: 0.65rem; border: none; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.15rem; }
-    .reply-btn { background: var(--primary-light); color: var(--primary); }
-    .reply-btn:hover { background: var(--primary); color: #fff; }
-    .status-btn { background: #fef3c7; color: #b45309; }
-    .status-btn:hover { background: var(--warning); color: #fff; }
-    .delete-btn { background: #fee2e2; color: #b91c1c; }
-    .delete-btn:hover { background: var(--danger); color: #fff; }
-    .reply-section { background: var(--primary-light); border-radius: 8px; padding: 0.4rem 0.7rem; margin: 0.4rem 0; border-left: 3px solid var(--primary); }
-    .reply-header { display: flex; align-items: center; gap: 0.3rem; font-size: 0.7rem; font-weight: 600; color: var(--primary-dark); }
-    .reply-content { color: var(--dark); font-size: 0.8rem; }
-    .reply-meta { font-size: 0.55rem; color: var(--gray); text-align: right; }
-    .empty-state { text-align: center; padding: 1.2rem 0.5rem; color: var(--gray); }
-    .empty-state i { font-size: 1.8rem; color: var(--light-gray); margin-bottom: 0.2rem; }
-    .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.4rem; }
-    .stat-card { text-align: center; padding: 0.4rem; background: var(--light); border-radius: var(--radius); }
-    .stat-number { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
-    .stat-label { font-size: 0.6rem; color: var(--gray); }
-    .history-item { background: var(--light); border-radius: 8px; padding: 0.5rem 0.8rem; margin-bottom: 0.4rem; border-left: 3px solid var(--primary); }
-    .history-item-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 600; }
-    .history-item-content { font-size: 0.75rem; color: var(--gray); margin: 0.15rem 0; }
-    .edit-btn { background: var(--primary); color: #fff; border: none; padding: 0.05rem 0.5rem; border-radius: 4px; font-size: 0.6rem; cursor: pointer; transition: var(--transition); }
-    .edit-btn:disabled { background: var(--light-gray); color: var(--gray); cursor: not-allowed; }
-    .edit-btn:hover:not(:disabled) { background: var(--primary-dark); }
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.35); backdrop-filter: blur(3px); z-index: 1000; justify-content: center; align-items: center; }
-    .modal.show { display: flex; }
-    .modal-content { background: #fff; border-radius: var(--radius); width: 92%; max-width: 460px; padding: 1.4rem; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; position: relative; }
-    .close-modal { position: absolute; top: 0.4rem; right: 0.7rem; background: none; border: none; font-size: 1.4rem; color: var(--gray); cursor: pointer; }
-    .modal-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.2rem; }
-    .modal-text { color: var(--gray); font-size: 0.85rem; margin-bottom: 0.8rem; }
-    .modal-actions { display: flex; gap: 0.5rem; margin-top: 0.8rem; flex-wrap: wrap; }
-    .modal-actions .btn { flex: 1; min-width: 70px; }
-    .switch { position: relative; display: inline-block; width: 36px; height: 18px; flex-shrink: 0; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--light-gray); transition: var(--transition); border-radius: 30px; }
-    .slider:before { position: absolute; content: ""; height: 13px; width: 13px; left: 2.5px; bottom: 2.5px; background: #fff; transition: var(--transition); border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
-    input:checked + .slider { background: var(--success); }
-    input:checked + .slider:before { transform: translateX(18px); }
-    .settings-item { display: flex; justify-content: space-between; align-items: center; padding: 0.25rem 0; border-bottom: 1px solid var(--light-gray); font-size: 0.8rem; }
-    .toast-container { position: fixed; top: 12px; right: 12px; z-index: 9999; display: flex; flex-direction: column; gap: 5px; max-width: 320px; width: 100%; }
-    .toast { background: #fff; border-radius: var(--radius); padding: 0.6rem 0.9rem; box-shadow: var(--shadow-lg); border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 0.4rem; animation: slideIn 0.2s ease; }
-    .toast .toast-icon { font-size: 1rem; }
-    .toast .toast-title { font-weight: 600; font-size: 0.8rem; }
-    .toast .toast-message { font-size: 0.7rem; color: var(--gray); }
-    .toast .toast-close { background: none; border: none; color: var(--gray); cursor: pointer; padding: 0 0.15rem; }
-    @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    .toast.removing { transform: translateX(120%); opacity: 0; }
-    .firebase-status { position: fixed; bottom: 12px; right: 12px; padding: 0.2rem 0.7rem; border-radius: 40px; font-size: 0.55rem; font-weight: 600; z-index: 999; box-shadow: var(--shadow); }
-    .firebase-status.connected { background: var(--success); color: #fff; }
-    .firebase-status.disconnected { background: var(--danger); color: #fff; }
-    .firebase-status.connecting { background: var(--warning); color: #fff; }
-    .footer { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; padding: 1rem; border-radius: var(--radius); margin-top: 1.2rem; text-align: center; font-size: 0.75rem; opacity: 0.9; }
-    .footer i { margin: 0 0.15rem; }
-    .toggle-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
-    .toggle-header i { transition: transform 0.2s; color: var(--gray); font-size: 0.9rem; }
-    .collapse-body { display: none; margin-top: 0.5rem; }
-    .collapse-body.open { display: block; }
-    @media (max-width: 480px) { .stats-grid { grid-template-columns: repeat(2,1fr); } .header { flex-direction: column; align-items: stretch; text-align: center; } .login-section { justify-content: center; } .form-actions { flex-direction: column; } .modal-content { padding: 1rem; } }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>MMC · Suggestion Box</title>
+
+    <!-- ===== ANDROID WEBVIEW FIXES ===== -->
+    <script>
+        (function() {
+            var isAndroid = /Android/i.test(navigator.userAgent);
+            if (isAndroid) {
+                console.log('Android WebView detected - applying fixes');
+
+                if (typeof localStorage === 'undefined' || localStorage === null) {
+                    console.warn('localStorage not available, using fallback');
+                    window.localStorage = {
+                        _data: {},
+                        setItem: function(k, v) { try { this._data[k] = String(v); } catch(e) {} return this; },
+                        getItem: function(k) { try { return this._data.hasOwnProperty(k) ? this._data[k] : null; } catch(e) { return null; } },
+                        removeItem: function(k) { try { delete this._data[k]; } catch(e) {} return this; },
+                        clear: function() { try { this._data = {}; } catch(e) {} return this; },
+                        key: function(i) { try { return Object.keys(this._data)[i] || null; } catch(e) { return null; } },
+                        get length() { try { return Object.keys(this._data).length; } catch(e) { return 0; } }
+                    };
+                }
+
+                if (typeof Promise === 'undefined') {
+                    console.warn('Promise not available, using polyfill');
+                    window.Promise = function(executor) {
+                        var self = this;
+                        self._state = 'pending';
+                        self._value = undefined;
+                        self._callbacks = [];
+                        function resolve(v) {
+                            if (self._state !== 'pending') return;
+                            self._state = 'fulfilled';
+                            self._value = v;
+                            self._callbacks.forEach(function(cb) { try { cb(v); } catch(e) {} });
+                        }
+                        function reject(r) {
+                            if (self._state !== 'pending') return;
+                            self._state = 'rejected';
+                            self._value = r;
+                        }
+                        try { executor(resolve, reject); } catch(e) { reject(e); }
+                    };
+                    Promise.prototype.then = function(onFulfilled) {
+                        if (this._state === 'fulfilled') { try { onFulfilled(this._value); } catch(e) {} }
+                        else if (this._state === 'pending') { this._callbacks.push(onFulfilled); }
+                        return this;
+                    };
+                    Promise.prototype.catch = function(onRejected) {
+                        if (this._state === 'rejected') { try { onRejected(this._value); } catch(e) {} }
+                        return this;
+                    };
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.body.classList.add('android-webview');
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #2563eb; --primary-dark: #1d4ed8; --primary-light: #dbeafe; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --light: #f8fafc; --dark: #1e293b; --gray: #64748b; --light-gray: #e2e8f0; --card-bg: #ffffff; --shadow: 0 4px 6px -1px rgba(0,0,0,0.06); --shadow-lg: 0 12px 20px -8px rgba(0,0,0,0.12); --radius: 14px; --transition: all 0.2s cubic-bezier(0.4,0,0.2,1); }
+        body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--dark); min-height: 100vh; padding: 14px; line-height: 1.5; }
+        .container { max-width: 1300px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; padding: 0.9rem 1.5rem; border-radius: var(--radius); margin-bottom: 1.5rem; box-shadow: var(--shadow); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-icon { background: rgba(255,255,255,0.15); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .logo-text h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.3px; }
+        .logo-text p { font-size: 0.7rem; opacity: 0.85; }
+        .login-section { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+        .user-info { display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.12); padding: 0.15rem 0.7rem 0.15rem 0.15rem; border-radius: 40px; }
+        .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: #fff; color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
+        .user-name { font-weight: 600; font-size: 0.8rem; }
+        .user-email { font-size: 0.6rem; opacity: 0.8; }
+        .btn-header { padding: 0.3rem 0.9rem; border-radius: 40px; font-weight: 600; border: none; cursor: pointer; font-size: 0.75rem; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.3rem; }
+        .btn-login { background: #fff; color: var(--primary); }
+        .btn-login:hover { transform: scale(0.97); }
+        .btn-logout { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-settings { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.15); }
+        .main-layout { display: grid; grid-template-columns: 1fr 1.6fr; gap: 1.5rem; }
+        @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } }
+        .card { background: var(--card-bg); border-radius: var(--radius); padding: 1.2rem; box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.03); margin-bottom: 1.2rem; transition: var(--transition); }
+        .card-title { font-weight: 700; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem; }
+        .card-title i { color: var(--primary); }
+        .form-group { margin-bottom: 0.9rem; }
+        .form-label { font-weight: 600; font-size: 0.8rem; display: block; margin-bottom: 0.2rem; }
+        .form-control { width: 100%; padding: 0.55rem 0.9rem; border: 2px solid var(--light-gray); border-radius: 10px; font-size: 0.85rem; transition: var(--transition); background: #fff; }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .form-textarea { min-height: 80px; resize: vertical; }
+        .select-wrapper { position: relative; }
+        .select-wrapper select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.9rem center; padding-right: 2.6rem; }
+        .btn { padding: 0.5rem 1.1rem; border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: var(--transition); border: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; }
+        .btn-primary { background: var(--primary); color: #fff; flex: 1; }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
+        .btn-secondary { background: var(--light); color: var(--dark); border: 2px solid var(--light-gray); }
+        .btn-secondary:hover { background: var(--light-gray); }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-warning { background: var(--warning); color: #fff; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .form-actions { display: flex; gap: 0.7rem; margin-top: 0.8rem; }
+        .feed-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.6rem; margin-bottom: 0.9rem; }
+        .filter-controls { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+        .filter-btn { padding: 0.2rem 0.8rem; background: var(--light); border: 2px solid transparent; border-radius: 30px; font-weight: 500; cursor: pointer; font-size: 0.7rem; transition: var(--transition); }
+        .filter-btn:hover { background: var(--primary-light); }
+        .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .display-control { display: flex; align-items: center; gap: 0.25rem; background: var(--light); padding: 0.1rem 0.5rem; border-radius: 30px; font-size: 0.7rem; }
+        .display-control select { border: 1px solid var(--light-gray); border-radius: 6px; padding: 0.05rem 0.2rem; background: #fff; font-size: 0.7rem; }
+        .suggestions-list { display: flex; flex-direction: column; gap: 0.8rem; }
+        .suggestion-card { background: var(--card-bg); border-radius: var(--radius); padding: 0.9rem 1.1rem; box-shadow: var(--shadow); border-left: 4px solid var(--primary); transition: var(--transition); }
+        .suggestion-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .suggestion-card.pending { border-left-color: var(--warning); }
+        .suggestion-card.approved { border-left-color: var(--success); }
+        .suggestion-card.implemented { border-left-color: #0ea5e9; }
+        .suggestion-card.rejected { border-left-color: var(--danger); }
+        .suggestion-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
+        .suggestion-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.1rem; }
+        .suggestion-content { color: var(--gray); font-size: 0.85rem; margin-bottom: 0.4rem; line-height: 1.5; }
+        .suggestion-details { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.7rem; color: var(--gray); margin-bottom: 0.4rem; }
+        .suggestion-details i { width: 14px; color: var(--primary); }
+        .status-badge { padding: 0.05rem 0.6rem; border-radius: 30px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2px; }
+        .status-badge.pending { background: #fef3c7; color: #b45309; }
+        .status-badge.approved { background: #d1fae5; color: #047857; }
+        .status-badge.implemented { background: #dbeafe; color: #1d4ed8; }
+        .status-badge.rejected { background: #fee2e2; color: #b91c1c; }
+        .private-badge { background: #9333ea; color: #fff; padding: 0.04rem 0.5rem; border-radius: 12px; font-size: 0.55rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.15rem; }
+        .suggestion-footer { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding-top: 0.5rem; border-top: 1px solid var(--light-gray); gap: 0.4rem; }
+        .suggestion-stats { display: flex; align-items: center; gap: 0.5rem; }
+        .vote-btn { background: none; border: none; color: var(--gray); cursor: pointer; padding: 0.05rem 0.3rem; border-radius: 6px; font-size: 0.75rem; display: flex; align-items: center; gap: 0.15rem; transition: var(--transition); }
+        .vote-btn:hover { color: var(--primary); background: var(--light); }
+        .vote-btn.voted { color: var(--primary); font-weight: 600; }
+        .vote-btn.disliked { color: var(--danger); font-weight: 600; }
+        .vote-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .admin-actions { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+        .action-btn { padding: 0.1rem 0.5rem; border-radius: 6px; font-weight: 500; cursor: pointer; font-size: 0.65rem; border: none; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.15rem; }
+        .reply-btn { background: var(--primary-light); color: var(--primary); }
+        .reply-btn:hover { background: var(--primary); color: #fff; }
+        .status-btn { background: #fef3c7; color: #b45309; }
+        .status-btn:hover { background: var(--warning); color: #fff; }
+        .delete-btn { background: #fee2e2; color: #b91c1c; }
+        .delete-btn:hover { background: var(--danger); color: #fff; }
+        .reply-section { background: var(--primary-light); border-radius: 8px; padding: 0.4rem 0.7rem; margin: 0.4rem 0; border-left: 3px solid var(--primary); }
+        .reply-header { display: flex; align-items: center; gap: 0.3rem; font-size: 0.7rem; font-weight: 600; color: var(--primary-dark); }
+        .reply-content { color: var(--dark); font-size: 0.8rem; }
+        .reply-meta { font-size: 0.55rem; color: var(--gray); text-align: right; }
+        .empty-state { text-align: center; padding: 1.2rem 0.5rem; color: var(--gray); }
+        .empty-state i { font-size: 1.8rem; color: var(--light-gray); margin-bottom: 0.2rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.4rem; }
+        .stat-card { text-align: center; padding: 0.4rem; background: var(--light); border-radius: var(--radius); }
+        .stat-number { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.6rem; color: var(--gray); }
+        .history-item { background: var(--light); border-radius: 8px; padding: 0.5rem 0.8rem; margin-bottom: 0.4rem; border-left: 3px solid var(--primary); }
+        .history-item-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 600; }
+        .history-item-content { font-size: 0.75rem; color: var(--gray); margin: 0.15rem 0; }
+        .edit-btn { background: var(--primary); color: #fff; border: none; padding: 0.05rem 0.5rem; border-radius: 4px; font-size: 0.6rem; cursor: pointer; transition: var(--transition); }
+        .edit-btn:disabled { background: var(--light-gray); color: var(--gray); cursor: not-allowed; }
+        .edit-btn:hover:not(:disabled) { background: var(--primary-dark); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.35); backdrop-filter: blur(3px); z-index: 1000; justify-content: center; align-items: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: #fff; border-radius: var(--radius); width: 92%; max-width: 460px; padding: 1.4rem; box-shadow: var(--shadow-lg); max-height: 90vh; overflow-y: auto; position: relative; }
+        .close-modal { position: absolute; top: 0.4rem; right: 0.7rem; background: none; border: none; font-size: 1.4rem; color: var(--gray); cursor: pointer; }
+        .modal-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.2rem; }
+        .modal-text { color: var(--gray); font-size: 0.85rem; margin-bottom: 0.8rem; }
+        .modal-actions { display: flex; gap: 0.5rem; margin-top: 0.8rem; flex-wrap: wrap; }
+        .modal-actions .btn { flex: 1; min-width: 70px; }
+        .switch { position: relative; display: inline-block; width: 36px; height: 18px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--light-gray); transition: var(--transition); border-radius: 30px; }
+        .slider:before { position: absolute; content: ""; height: 13px; width: 13px; left: 2.5px; bottom: 2.5px; background: #fff; transition: var(--transition); border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+        input:checked + .slider { background: var(--success); }
+        input:checked + .slider:before { transform: translateX(18px); }
+        .settings-item { display: flex; justify-content: space-between; align-items: center; padding: 0.25rem 0; border-bottom: 1px solid var(--light-gray); font-size: 0.8rem; }
+        .toast-container { position: fixed; top: 12px; right: 12px; z-index: 9999; display: flex; flex-direction: column; gap: 5px; max-width: 320px; width: 100%; }
+        .toast { background: #fff; border-radius: var(--radius); padding: 0.6rem 0.9rem; box-shadow: var(--shadow-lg); border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 0.4rem; animation: slideIn 0.2s ease; }
+        .toast .toast-icon { font-size: 1rem; }
+        .toast .toast-title { font-weight: 600; font-size: 0.8rem; }
+        .toast .toast-message { font-size: 0.7rem; color: var(--gray); }
+        .toast .toast-close { background: none; border: none; color: var(--gray); cursor: pointer; padding: 0 0.15rem; }
+        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast.removing { transform: translateX(120%); opacity: 0; }
+        .firebase-status { position: fixed; bottom: 12px; right: 12px; padding: 0.2rem 0.7rem; border-radius: 40px; font-size: 0.55rem; font-weight: 600; z-index: 999; box-shadow: var(--shadow); }
+        .firebase-status.connected { background: var(--success); color: #fff; }
+        .firebase-status.disconnected { background: var(--danger); color: #fff; }
+        .firebase-status.connecting { background: var(--warning); color: #fff; }
+        .footer { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; padding: 1rem; border-radius: var(--radius); margin-top: 1.2rem; text-align: center; font-size: 0.75rem; opacity: 0.9; }
+        .footer i { margin: 0 0.15rem; }
+        .toggle-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+        .toggle-header i { transition: transform 0.2s; color: var(--gray); font-size: 0.9rem; }
+        .collapse-body { display: none; margin-top: 0.5rem; }
+        .collapse-body.open { display: block; }
+        @media (max-width: 480px) { .stats-grid { grid-template-columns: repeat(2,1fr); } .header { flex-direction: column; align-items: stretch; text-align: center; } .login-section { justify-content: center; } .form-actions { flex-direction: column; } .modal-content { padding: 1rem; } }
+        .android-webview .header { padding: 0.7rem 1rem; }
+        .android-webview .card { padding: 0.9rem; margin-bottom: 0.8rem; }
+        .android-webview .btn { padding: 0.4rem 0.9rem; font-size: 0.8rem; }
+    </style>
 </head>
 <body>
-  <div class="firebase-status connected" id="firebaseStatus"><i class="fas fa-circle"></i> Connected</div>
-  <div class="toast-container" id="toastContainer"></div>
+<div class="firebase-status connected" id="firebaseStatus"><i class="fas fa-circle"></i> Connected</div>
+<div class="toast-container" id="toastContainer"></div>
 
-  <div class="container">
+<div class="container">
     <header class="header">
-      <div class="logo"><div class="logo-icon"><i class="fas fa-lightbulb"></i></div><div class="logo-text"><h1>MMC Suggestion</h1><p>Your voice shapes campus</p></div></div>
-      <div class="login-section">
-        <div class="user-info" id="userInfo" style="display:none;"><div class="user-avatar" id="userAvatar">A</div><div><div class="user-name" id="userName">Admin</div><div class="user-email" id="userEmail"></div></div></div>
-        <button class="btn-header btn-settings" id="adminSettingsBtn" style="display:none;"><i class="fas fa-cog"></i></button>
-        <button class="btn-header btn-login" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Admin</button>
-        <button class="btn-header btn-logout" id="logoutBtn" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
-      </div>
+        <div class="logo"><div class="logo-icon"><i class="fas fa-lightbulb"></i></div><div class="logo-text"><h1>MMC Suggestion</h1><p>Your voice shapes campus</p></div></div>
+        <div class="login-section">
+            <div class="user-info" id="userInfo" style="display:none;"><div class="user-avatar" id="userAvatar">A</div><div><div class="user-name" id="userName">Admin</div><div class="user-email" id="userEmail"></div></div></div>
+            <button class="btn-header btn-settings" id="adminSettingsBtn" style="display:none;"><i class="fas fa-cog"></i></button>
+            <button class="btn-header btn-login" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Admin</button>
+            <button class="btn-header btn-logout" id="logoutBtn" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
     </header>
 
     <div class="main-layout">
-      <div class="left-column">
-        <!-- Submit Card -->
-        <div class="card" id="submitFormCard">
-          <div class="toggle-header" id="toggleSubmit">
-            <h2 class="card-title" style="margin-bottom:0;"><i class="fas fa-edit"></i> Submit Suggestion</h2>
-            <i class="fas fa-chevron-down" id="submitIcon"></i>
-          </div>
-          <div class="collapse-body open" id="submitBody">
-            <form id="suggestionForm">
-              <div class="form-group"><label class="form-label">Title <span style="color:var(--danger);">*</span></label><input type="text" id="suggestionTitle" class="form-control" placeholder="Enter title" required /></div>
-              <div class="form-group"><label class="form-label">Description <span style="color:var(--danger);">*</span></label><textarea id="suggestionDescription" class="form-control form-textarea" placeholder="Describe your idea..." required></textarea></div>
-              <div class="form-group"><label class="form-label">Category</label><div class="select-wrapper"><select id="categorySelect" class="form-control"><option value="general">General</option><option value="facilities">Facilities</option><option value="academics">Academics</option><option value="services">Services</option><option value="safety">Safety</option><option value="events">Events</option><option value="other">Other</option></select></div></div>
-              <div class="form-group"><label class="form-label">Department</label><div class="select-wrapper"><select id="departmentSelect" class="form-control"><option value="General">General</option><option value="BICTE">BICTE</option><option value="BBS">BBS</option><option value="Hostel">Hostel</option><option value="Library">Library</option><option value="Playground">Playground</option><option value="Administration">Administration</option><option value="Other">Other</option></select></div></div>
-              <div class="form-group"><label class="form-label">Location</label><input type="text" id="location" class="form-control" placeholder="e.g., Library" /></div>
-              <div class="form-group"><label class="form-label">Contact <span style="color:var(--gray);font-weight:400;">(optional)</span></label><input type="text" id="contactInfo" class="form-control" placeholder="Email or phone" /></div>
-              <div class="form-actions"><button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-paper-plane"></i> Submit</button><button type="reset" class="btn btn-secondary"><i class="fas fa-redo"></i> Clear</button></div>
-            </form>
-          </div>
+        <div class="left-column">
+            <div class="card" id="submitFormCard">
+                <div class="toggle-header" id="toggleSubmit">
+                    <h2 class="card-title" style="margin-bottom:0;"><i class="fas fa-edit"></i> Submit Suggestion</h2>
+                    <i class="fas fa-chevron-down" id="submitIcon"></i>
+                </div>
+                <div class="collapse-body open" id="submitBody">
+                    <form id="suggestionForm">
+                        <div class="form-group"><label class="form-label">Title <span style="color:var(--danger);">*</span></label><input type="text" id="suggestionTitle" class="form-control" placeholder="Enter title" required /></div>
+                        <div class="form-group"><label class="form-label">Description <span style="color:var(--danger);">*</span></label><textarea id="suggestionDescription" class="form-control form-textarea" placeholder="Describe your idea..." required></textarea></div>
+                        <div class="form-group"><label class="form-label">Category</label><div class="select-wrapper"><select id="categorySelect" class="form-control"><option value="general">General</option><option value="facilities">Facilities</option><option value="academics">Academics</option><option value="services">Services</option><option value="safety">Safety</option><option value="events">Events</option><option value="other">Other</option></select></div></div>
+                        <div class="form-group"><label class="form-label">Department</label><div class="select-wrapper"><select id="departmentSelect" class="form-control"><option value="General">General</option><option value="BICTE">BICTE</option><option value="BBS">BBS</option><option value="Hostel">Hostel</option><option value="Library">Library</option><option value="Playground">Playground</option><option value="Administration">Administration</option><option value="Other">Other</option></select></div></div>
+                        <div class="form-group"><label class="form-label">Location</label><input type="text" id="location" class="form-control" placeholder="e.g., Library" /></div>
+                        <div class="form-group"><label class="form-label">Contact <span style="color:var(--gray);font-weight:400;">(optional)</span></label><input type="text" id="contactInfo" class="form-control" placeholder="Email or phone" /></div>
+                        <div class="form-actions"><button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-paper-plane"></i> Submit</button><button type="reset" class="btn btn-secondary"><i class="fas fa-redo"></i> Clear</button></div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card" id="historyCard">
+                <div class="toggle-header" id="toggleHistory">
+                    <h2 class="card-title" style="margin-bottom:0;"><i class="fas fa-history"></i> Your History</h2>
+                    <i class="fas fa-chevron-down" id="historyIcon"></i>
+                </div>
+                <div class="collapse-body open" id="historyBody">
+                    <div id="studentHistoryList"></div>
+                    <div class="empty-state" id="emptyHistoryState"><i class="fas fa-history"></i><h3 style="font-size:0.9rem;">No suggestions yet</h3><p style="font-size:0.8rem;">Submit your first idea!</p></div>
+                </div>
+            </div>
+
+            <div class="card" id="statsCard" style="display:none;"><h2 class="card-title"><i class="fas fa-chart-bar"></i> Stats</h2><div class="stats-grid"><div class="stat-card"><div class="stat-number" id="totalSuggestions">0</div><div class="stat-label">Total</div></div><div class="stat-card"><div class="stat-number" id="pendingCount">0</div><div class="stat-label">Pending</div></div><div class="stat-card"><div class="stat-number" id="approvedCount">0</div><div class="stat-label">Approved</div></div><div class="stat-card"><div class="stat-number" id="implementedCount">0</div><div class="stat-label">Implemented</div></div><div class="stat-card"><div class="stat-number" id="rejectedCount">0</div><div class="stat-label">Rejected</div></div><div class="stat-card"><div class="stat-number" id="totalVotes">0</div><div class="stat-label">Votes</div></div></div></div>
         </div>
 
-        <!-- History Card -->
-        <div class="card" id="historyCard">
-          <div class="toggle-header" id="toggleHistory">
-            <h2 class="card-title" style="margin-bottom:0;"><i class="fas fa-history"></i> Your History</h2>
-            <i class="fas fa-chevron-down" id="historyIcon"></i>
-          </div>
-          <div class="collapse-body open" id="historyBody">
-            <div id="studentHistoryList"></div>
-            <div class="empty-state" id="emptyHistoryState"><i class="fas fa-history"></i><h3 style="font-size:0.9rem;">No suggestions yet</h3><p style="font-size:0.8rem;">Submit your first idea!</p></div>
-          </div>
+        <div class="right-column">
+            <div class="card">
+                <div class="feed-header"><h2 class="card-title" style="margin-bottom:0;"><i class="fas fa-list"></i> Suggestions</h2><div class="feed-controls"><div class="filter-controls" id="filterControls"><button class="filter-btn active" data-filter="all">All</button><button class="filter-btn" data-filter="pending">Pending</button><button class="filter-btn" data-filter="approved">Approved</button><button class="filter-btn" data-filter="implemented">Implemented</button><button class="filter-btn" data-filter="rejected">Rejected</button></div><div class="display-control"><span>Show:</span><select id="displayCount"><option value="3">3</option><option value="5" selected>5</option><option value="10">10</option><option value="all">All</option></select></div></div></div>
+                <div class="suggestions-list" id="suggestionsList"></div>
+                <div class="empty-state" id="emptyState"><i class="fas fa-inbox"></i><h3 style="font-size:0.9rem;">No suggestions</h3><p style="font-size:0.8rem;">Be the first to share!</p></div>
+            </div>
         </div>
-
-        <!-- Stats Admin -->
-        <div class="card" id="statsCard" style="display:none;"><h2 class="card-title"><i class="fas fa-chart-bar"></i> Stats</h2><div class="stats-grid"><div class="stat-card"><div class="stat-number" id="totalSuggestions">0</div><div class="stat-label">Total</div></div><div class="stat-card"><div class="stat-number" id="pendingCount">0</div><div class="stat-label">Pending</div></div><div class="stat-card"><div class="stat-number" id="approvedCount">0</div><div class="stat-label">Approved</div></div><div class="stat-card"><div class="stat-number" id="implementedCount">0</div><div class="stat-label">Implemented</div></div><div class="stat-card"><div class="stat-number" id="rejectedCount">0</div><div class="stat-label">Rejected</div></div><div class="stat-card"><div class="stat-number" id="totalVotes">0</div><div class="stat-label">Votes</div></div></div></div>
-      </div>
-
-      <!-- Feed -->
-      <div class="right-column">
-        <div class="card">
-          <div class="feed-header"><h2 class="card-title" style="margin-bottom:0;"><i class="fas fa-list"></i> Suggestions</h2><div class="feed-controls"><div class="filter-controls" id="filterControls"><button class="filter-btn active" data-filter="all">All</button><button class="filter-btn" data-filter="pending">Pending</button><button class="filter-btn" data-filter="approved">Approved</button><button class="filter-btn" data-filter="implemented">Implemented</button><button class="filter-btn" data-filter="rejected">Rejected</button></div><div class="display-control"><span>Show:</span><select id="displayCount"><option value="3">3</option><option value="5" selected>5</option><option value="10">10</option><option value="all">All</option></select></div></div></div>
-          <div class="suggestions-list" id="suggestionsList"></div>
-          <div class="empty-state" id="emptyState"><i class="fas fa-inbox"></i><h3 style="font-size:0.9rem;">No suggestions</h3><p style="font-size:0.8rem;">Be the first to share!</p></div>
-        </div>
-      </div>
     </div>
 
     <footer class="footer"><i class="fas fa-hands-helping"></i> Quality Circle Group &amp; MMC · <i class="fas fa-shield-alt"></i> v2.0</footer>
-  </div>
+</div>
 
-  <!-- MODALS -->
-  <div class="modal" id="loginModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="loginModal">&times;</button><h3 class="modal-title">Admin Login</h3><p class="modal-text">Enter your credentials</p><input type="email" class="form-control" id="emailInput" placeholder="Email" /><input type="password" class="form-control" id="passwordInput" placeholder="Password" style="margin-top:0.5rem;" /><div id="loginError" style="color:var(--danger);font-size:0.8rem;margin-top:0.3rem;display:none;">Invalid</div><button class="btn btn-primary" id="loginSubmitBtn" style="width:100%;margin-top:0.7rem;"><i class="fas fa-sign-in-alt"></i> Login</button></div></div>
-  <div class="modal" id="editSuggestionModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="editSuggestionModal">&times;</button><h3 class="modal-title">Edit Suggestion</h3><p class="modal-text" id="editTimeRemaining"></p><div class="form-group"><label class="form-label">Title</label><input type="text" id="editTitle" class="form-control" /></div><div class="form-group"><label class="form-label">Description</label><textarea id="editDescription" class="form-control form-textarea"></textarea></div><div class="modal-actions"><button class="btn btn-primary" id="saveEditBtn"><i class="fas fa-save"></i> Save</button><button class="btn btn-secondary" id="cancelEditBtn">Cancel</button></div></div></div>
-  <div class="modal" id="statusModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="statusModal">&times;</button><h3 class="modal-title">Change Status</h3><p class="modal-text" id="statusModalText">Select new status:</p><div style="display:flex;flex-direction:column;gap:0.25rem;"><button class="btn btn-warning" id="setPendingBtn">Pending</button><button class="btn btn-success" id="setApprovedBtn">Approved</button><button class="btn btn-primary" id="setImplementedBtn">Implemented</button><button class="btn btn-danger" id="setRejectedBtn">Rejected</button></div><div class="modal-actions"><button class="btn btn-secondary" id="cancelStatusBtn">Cancel</button></div></div></div>
-  <div class="modal" id="replyModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="replyModal">&times;</button><h3 class="modal-title">Admin Reply</h3><p class="modal-text" id="replyModalText">Write reply:</p><textarea id="adminReply" class="form-control form-textarea" style="min-height:70px;"></textarea><div class="modal-actions"><button class="btn btn-primary" id="submitReplyBtn"><i class="fas fa-reply"></i> Send</button><button class="btn btn-secondary" id="cancelReplyBtn">Cancel</button></div></div></div>
-  <div class="modal" id="confirmModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="confirmModal">&times;</button><h3 class="modal-title" id="modalTitle">Confirm</h3><p class="modal-text" id="modalText">Are you sure?</p><div class="modal-actions"><button class="btn btn-danger" id="confirmAction">Confirm</button><button class="btn btn-secondary" id="cancelAction">Cancel</button></div></div></div>
-  <div class="modal" id="settingsModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="settingsModal">&times;</button><h3 class="modal-title"><i class="fas fa-cog"></i> Settings</h3><div class="settings-item"><label><input type="checkbox" id="emailNotifications" checked /> Email notifications</label></div><div class="settings-item"><label><input type="radio" name="displayMode" value="all" checked /> Show all</label><label><input type="radio" name="displayMode" value="approved" /> Approved only</label></div><div class="settings-item"><label>Submit form <span class="switch"><input type="checkbox" id="showSubmitForm" checked /><span class="slider"></span></span></label></div><div class="settings-item"><label>Statistics <span class="switch"><input type="checkbox" id="showStatistics" checked /><span class="slider"></span></span></label></div><div class="settings-item"><label>Edit window <input type="number" id="allowEditWithin" min="1" max="60" value="5" style="width:55px;padding:0.15rem;border:2px solid var(--light-gray);border-radius:6px;text-align:center;" /> min</label></div><button class="btn btn-primary" id="saveSettingsBtn" style="width:100%;margin-top:0.7rem;"><i class="fas fa-save"></i> Save</button></div></div>
+<!-- MODALS -->
+<div class="modal" id="loginModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="loginModal">&times;</button><h3 class="modal-title">Admin Login</h3><p class="modal-text">Enter your credentials</p><input type="email" class="form-control" id="emailInput" placeholder="Email" /><input type="password" class="form-control" id="passwordInput" placeholder="Password" style="margin-top:0.5rem;" /><div id="loginError" style="color:var(--danger);font-size:0.8rem;margin-top:0.3rem;display:none;">Invalid</div><button class="btn btn-primary" id="loginSubmitBtn" style="width:100%;margin-top:0.7rem;"><i class="fas fa-sign-in-alt"></i> Login</button></div></div>
+<div class="modal" id="editSuggestionModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="editSuggestionModal">&times;</button><h3 class="modal-title">Edit Suggestion</h3><p class="modal-text" id="editTimeRemaining"></p><div class="form-group"><label class="form-label">Title</label><input type="text" id="editTitle" class="form-control" /></div><div class="form-group"><label class="form-label">Description</label><textarea id="editDescription" class="form-control form-textarea"></textarea></div><div class="modal-actions"><button class="btn btn-primary" id="saveEditBtn"><i class="fas fa-save"></i> Save</button><button class="btn btn-secondary" id="cancelEditBtn">Cancel</button></div></div></div>
+<div class="modal" id="statusModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="statusModal">&times;</button><h3 class="modal-title">Change Status</h3><p class="modal-text" id="statusModalText">Select new status:</p><div style="display:flex;flex-direction:column;gap:0.25rem;"><button class="btn btn-warning" id="setPendingBtn">Pending</button><button class="btn btn-success" id="setApprovedBtn">Approved</button><button class="btn btn-primary" id="setImplementedBtn">Implemented</button><button class="btn btn-danger" id="setRejectedBtn">Rejected</button></div><div class="modal-actions"><button class="btn btn-secondary" id="cancelStatusBtn">Cancel</button></div></div></div>
+<div class="modal" id="replyModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="replyModal">&times;</button><h3 class="modal-title">Admin Reply</h3><p class="modal-text" id="replyModalText">Write reply:</p><textarea id="adminReply" class="form-control form-textarea" style="min-height:70px;"></textarea><div class="modal-actions"><button class="btn btn-primary" id="submitReplyBtn"><i class="fas fa-reply"></i> Send</button><button class="btn btn-secondary" id="cancelReplyBtn">Cancel</button></div></div></div>
+<div class="modal" id="confirmModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="confirmModal">&times;</button><h3 class="modal-title" id="modalTitle">Confirm</h3><p class="modal-text" id="modalText">Are you sure?</p><div class="modal-actions"><button class="btn btn-danger" id="confirmAction">Confirm</button><button class="btn btn-secondary" id="cancelAction">Cancel</button></div></div></div>
+<div class="modal" id="settingsModal"><div class="modal-content" style="position:relative;"><button class="close-modal" data-modal="settingsModal">&times;</button><h3 class="modal-title"><i class="fas fa-cog"></i> Settings</h3><div class="settings-item"><label><input type="checkbox" id="emailNotifications" checked /> Email notifications</label></div><div class="settings-item"><label><input type="radio" name="displayMode" value="all" checked /> Show all</label><label><input type="radio" name="displayMode" value="approved" /> Approved only</label></div><div class="settings-item"><label>Submit form <span class="switch"><input type="checkbox" id="showSubmitForm" checked /><span class="slider"></span></span></label></div><div class="settings-item"><label>Statistics <span class="switch"><input type="checkbox" id="showStatistics" checked /><span class="slider"></span></span></label></div><div class="settings-item"><label>Edit window <input type="number" id="allowEditWithin" min="1" max="60" value="5" style="width:55px;padding:0.15rem;border:2px solid var(--light-gray);border-radius:6px;text-align:center;" /> min</label></div><button class="btn btn-primary" id="saveSettingsBtn" style="width:100%;margin-top:0.7rem;"><i class="fas fa-save"></i> Save</button></div></div>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+    // ===== SAFETY CHECK =====
+    if (typeof localStorage === 'undefined') {
+        window.localStorage = {
+            _data: {},
+            setItem: function(k, v) { this._data[k] = String(v); },
+            getItem: function(k) { return this._data.hasOwnProperty(k) ? this._data[k] : null; },
+            removeItem: function(k) { delete this._data[k]; },
+            clear: function() { this._data = {}; }
+        };
+    }
+
     // CONFIG
     const firebaseConfig = {
       apiKey: "AIzaSyA5pquaPbD4qa75yaeOfm-TrE_VllKrgsk",
@@ -225,36 +294,51 @@
       messagingSenderId: "913466517340",
       appId: "1:913466517340:web:10f0973f3f92fc7900c399"
     };
-    firebase.initializeApp(firebaseConfig);
+
+    try {
+        firebase.initializeApp(firebaseConfig);
+    } catch(e) {
+        console.warn('Firebase already initialized:', e);
+    }
+
     const auth = firebase.auth();
     const db = firebase.firestore();
-    db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 
-    // Generate a device ID that persists in localStorage
+    db.enablePersistence({ synchronizeTabs: true })
+        .then(() => console.log('Firestore persistence enabled'))
+        .catch((err) => console.warn('Persistence error:', err));
+
     function getDeviceId() {
-      let deviceId = localStorage.getItem('deviceId');
+      let deviceId = null;
+      try {
+        deviceId = localStorage.getItem('deviceId');
+      } catch(e) {}
       if (!deviceId) {
         deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('deviceId', deviceId);
+        try {
+          localStorage.setItem('deviceId', deviceId);
+        } catch(e) {}
       }
       return deviceId;
     }
     const DEVICE_ID = getDeviceId();
 
-    // ========== VOTE STATE: store which suggestions user has liked/disliked ==========
     function getVoteState() {
       try {
-        return JSON.parse(localStorage.getItem('userVoteState') || '{"likes":{},"dislikes":{}}');
+        const data = localStorage.getItem('userVoteState');
+        return data ? JSON.parse(data) : { likes: {}, dislikes: {} };
       } catch { return { likes: {}, dislikes: {} }; }
     }
     function setVoteState(state) {
-      localStorage.setItem('userVoteState', JSON.stringify(state));
+      try {
+        localStorage.setItem('userVoteState', JSON.stringify(state));
+      } catch(e) {}
     }
 
     class App {
       constructor() {
         this.suggestions = [];
-        this.voteState = getVoteState(); // { likes: { id: true }, dislikes: { id: true } }
+        this.voteState = getVoteState();
         this.currentFilter = 'all';
         this.selectedId = null;
         this.currentUser = null;
@@ -262,33 +346,46 @@
         this.userSuggestions = new Set();
         this.displayCount = '5';
         this.settings = {
-          showSubmitForm: localStorage.getItem('showSubmitForm') !== 'false',
-          showStatistics: localStorage.getItem('showStatistics') !== 'false',
-          allowEditWithin: parseInt(localStorage.getItem('allowEditWithin') || '5'),
-          emailNotifications: localStorage.getItem('emailNotifications') !== 'false',
-          displayMode: localStorage.getItem('displayMode') || 'all'
+          showSubmitForm: this.safeGet('showSubmitForm') !== 'false',
+          showStatistics: this.safeGet('showStatistics') !== 'false',
+          allowEditWithin: parseInt(this.safeGet('allowEditWithin') || '5'),
+          emailNotifications: this.safeGet('emailNotifications') !== 'false',
+          displayMode: this.safeGet('displayMode') || 'all'
         };
-        // Only store suggestions submitted from this device
-        this.studentHistory = JSON.parse(localStorage.getItem('studentHistory_' + DEVICE_ID) || '{}');
-        this.submitOpen = localStorage.getItem('submitOpen') !== 'false';
-        this.historyOpen = localStorage.getItem('historyOpen') !== 'false';
+        this.studentHistory = this.loadHistory();
+        this.submitOpen = this.safeGet('submitOpen') !== 'false';
+        this.historyOpen = this.safeGet('historyOpen') !== 'false';
         this.init();
       }
 
+      safeGet(key) {
+        try { return localStorage.getItem(key); } catch(e) { return null; }
+      }
+      safeSet(key, value) {
+        try { localStorage.setItem(key, value); } catch(e) {}
+      }
+      loadHistory() {
+        try { return JSON.parse(localStorage.getItem('studentHistory_' + DEVICE_ID) || '{}'); } catch(e) { return {}; }
+      }
+      saveHistory() {
+        try { localStorage.setItem('studentHistory_' + DEVICE_ID, JSON.stringify(this.studentHistory)); } catch(e) {}
+      }
+
       async init() {
+        console.log('App initializing...');
         this.setupEvents();
         this.updateStatus('connecting');
-        this.applyToggleState('submitBody', 'submitIcon', this.submitOpen);
-        this.applyToggleState('historyBody', 'historyIcon', this.historyOpen);
+        this.applyToggle('submitBody', 'submitIcon', this.submitOpen);
+        this.applyToggle('historyBody', 'historyIcon', this.historyOpen);
 
         auth.onAuthStateChanged(async user => {
           this.currentUser = user;
           this.isAdmin = !!user;
-          if (user) { 
-            this.showUser(user); 
-            await this.loadUserSuggestions(user.uid); 
-          } else { 
-            this.hideUser(); 
+          if (user) {
+            this.showUser(user);
+            await this.loadUserSuggestions(user.uid);
+          } else {
+            this.hideUser();
             this.userSuggestions.clear();
           }
           this.updateUI();
@@ -296,53 +393,49 @@
           this.renderHistory();
         });
 
-        // Load from cache first (instant)
         try {
           const cached = await db.collection("suggestions").orderBy("date","desc").limit(50).get({ source:'cache' });
-          if(!cached.empty){ 
-            this.suggestions=[]; 
-            cached.forEach(d=>{ 
-              let data=d.data(); 
-              data.id=d.id; 
-              this.suggestions.push(data); 
-              if (data.deviceId === DEVICE_ID) {
-                this.updateHistory(data); 
-              }
-            }); 
-            this.renderAll(); 
+          if(!cached.empty){
+            this.suggestions=[];
+            cached.forEach(d=>{
+              let data=d.data();
+              data.id=d.id;
+              this.suggestions.push(data);
+              if (data.deviceId === DEVICE_ID) this.updateHistory(data);
+            });
+            this.renderAll();
           }
         } catch(e){}
-        
+
         db.collection("suggestions").orderBy("date","desc").onSnapshot(snap=>{
-          this.suggestions=[]; 
-          snap.forEach(d=>{ 
-            let data=d.data(); 
-            data.id=d.id; 
-            this.suggestions.push(data); 
-            if (data.deviceId === DEVICE_ID) {
-              this.updateHistory(data); 
-            }
+          this.suggestions=[];
+          snap.forEach(d=>{
+            let data=d.data();
+            data.id=d.id;
+            this.suggestions.push(data);
+            if (data.deviceId === DEVICE_ID) this.updateHistory(data);
           });
-          this.renderAll(); 
+          this.renderAll();
           this.updateStatus('connected');
-        }, err=>{ 
-          this.updateStatus('disconnected'); 
-          this.toast('Connection error','Using cached data','warning'); 
+        }, err=>{
+          this.updateStatus('disconnected');
+          this.toast('Connection error','Using cached data','warning');
         });
       }
 
-      toast(title,msg,type='info'){ 
-        const c=document.getElementById('toastContainer'); 
-        const t=document.createElement('div'); 
-        t.className=`toast ${type}`; 
-        const icons={success:'fa-check-circle',error:'fa-exclamation-circle',warning:'fa-exclamation-triangle',info:'fa-info-circle'}; 
-        t.innerHTML=`<i class="fas ${icons[type]||icons.info}" style="color:var(--${type})"></i><div><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div><button class="toast-close"><i class="fas fa-times"></i></button>`; 
-        t.querySelector('.toast-close').onclick=()=>{ t.classList.add('removing'); setTimeout(()=>t.remove(),300); }; 
-        c.appendChild(t); 
-        setTimeout(()=>{ if(t.parentNode){ t.classList.add('removing'); setTimeout(()=>t.remove(),300); }},3500); 
+      toast(title, msg, type='info') {
+        const c = document.getElementById('toastContainer');
+        if (!c) return;
+        const t = document.createElement('div');
+        t.className = 'toast ' + type;
+        const icons = {success:'fa-check-circle', error:'fa-exclamation-circle', warning:'fa-exclamation-triangle', info:'fa-info-circle'};
+        t.innerHTML = '<i class="fas ' + (icons[type] || icons.info) + '" style="color:var(--' + type + ')"></i><div><div class="toast-title">' + title + '</div><div class="toast-message">' + msg + '</div></div><button class="toast-close"><i class="fas fa-times"></i></button>';
+        t.querySelector('.toast-close').onclick = function() { t.classList.add('removing'); setTimeout(function() { t.remove(); }, 300); };
+        c.appendChild(t);
+        setTimeout(function() { if(t.parentNode) { t.classList.add('removing'); setTimeout(function() { t.remove(); }, 300); } }, 3500);
       }
 
-      applyToggleState(bodyId, iconId, isOpen) {
+      applyToggle(bodyId, iconId, isOpen) {
         const body = document.getElementById(bodyId);
         const icon = document.getElementById(iconId);
         if (!body) return;
@@ -355,100 +448,172 @@
         }
       }
 
-      setupEvents(){
-        document.getElementById('toggleSubmit').addEventListener('click', () => {
-          const body = document.getElementById('submitBody');
-          const icon = document.getElementById('submitIcon');
-          body.classList.toggle('open');
-          icon.className = body.classList.contains('open') ? 'fas fa-chevron-down' : 'fas fa-chevron-right';
-          localStorage.setItem('submitOpen', body.classList.contains('open'));
-        });
-        document.getElementById('toggleHistory').addEventListener('click', () => {
-          const body = document.getElementById('historyBody');
-          const icon = document.getElementById('historyIcon');
-          body.classList.toggle('open');
-          icon.className = body.classList.contains('open') ? 'fas fa-chevron-down' : 'fas fa-chevron-right';
-          localStorage.setItem('historyOpen', body.classList.contains('open'));
+      setupEvents() {
+        const toggleSubmit = document.getElementById('toggleSubmit');
+        if (toggleSubmit) {
+          toggleSubmit.addEventListener('click', function() {
+            const body = document.getElementById('submitBody');
+            const icon = document.getElementById('submitIcon');
+            body.classList.toggle('open');
+            icon.className = body.classList.contains('open') ? 'fas fa-chevron-down' : 'fas fa-chevron-right';
+            try { localStorage.setItem('submitOpen', body.classList.contains('open')); } catch(e) {}
+          });
+        }
+        const toggleHistory = document.getElementById('toggleHistory');
+        if (toggleHistory) {
+          toggleHistory.addEventListener('click', function() {
+            const body = document.getElementById('historyBody');
+            const icon = document.getElementById('historyIcon');
+            body.classList.toggle('open');
+            icon.className = body.classList.contains('open') ? 'fas fa-chevron-down' : 'fas fa-chevron-right';
+            try { localStorage.setItem('historyOpen', body.classList.contains('open')); } catch(e) {}
+          });
+        }
+
+        const form = document.getElementById('suggestionForm');
+        if (form) form.addEventListener('submit', function(e) { app.handleSubmit(e); });
+
+        const filterControls = document.getElementById('filterControls');
+        if (filterControls) {
+          filterControls.addEventListener('click', function(e) {
+            if(e.target.classList.contains('filter-btn')) app.handleFilter(e);
+          });
+        }
+
+        const displayCount = document.getElementById('displayCount');
+        if (displayCount) {
+          displayCount.addEventListener('change', function(e) {
+            app.displayCount = e.target.value;
+            app.renderSuggestions();
+          });
+        }
+
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) loginBtn.onclick = function() { app.showModal('loginModal'); };
+
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) logoutBtn.onclick = function() { app.logout(); };
+
+        const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+        if (loginSubmitBtn) loginSubmitBtn.onclick = function() { app.handleLogin(); };
+
+        const passwordInput = document.getElementById('passwordInput');
+        if (passwordInput) {
+          passwordInput.addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') app.handleLogin();
+          });
+        }
+
+        ['setPendingBtn','setApprovedBtn','setImplementedBtn','setRejectedBtn'].forEach(function(id) {
+          const el = document.getElementById(id);
+          if (el) el.onclick = function() { app.changeStatus(id.replace('set','').replace('Btn','').toLowerCase()); };
         });
 
-        document.getElementById('suggestionForm').addEventListener('submit', e=>this.handleSubmit(e));
-        document.getElementById('filterControls').addEventListener('click', e=>{ if(e.target.classList.contains('filter-btn')) this.handleFilter(e); });
-        document.getElementById('displayCount').addEventListener('change', e=>{ this.displayCount=e.target.value; this.renderSuggestions(); });
-        document.getElementById('loginBtn').onclick=()=>this.showModal('loginModal');
-        document.getElementById('logoutBtn').onclick=()=>this.logout();
-        document.getElementById('loginSubmitBtn').onclick=()=>this.handleLogin();
-        document.getElementById('passwordInput').addEventListener('keypress', e=>{ if(e.key==='Enter') this.handleLogin(); });
-        ['setPendingBtn','setApprovedBtn','setImplementedBtn','setRejectedBtn'].forEach(id=>{ document.getElementById(id).onclick=()=>this.changeStatus(id.replace('set','').replace('Btn','').toLowerCase()); });
-        document.getElementById('cancelStatusBtn').onclick=()=>this.hideModal('statusModal');
-        document.getElementById('submitReplyBtn').onclick=()=>this.submitReply();
-        document.getElementById('cancelReplyBtn').onclick=()=>this.hideModal('replyModal');
-        document.getElementById('saveEditBtn').onclick=()=>this.saveEdit();
-        document.getElementById('cancelEditBtn').onclick=()=>this.hideModal('editSuggestionModal');
-        document.getElementById('confirmAction').onclick=()=>this.executeConfirm();
-        document.getElementById('cancelAction').onclick=()=>this.hideModal('confirmModal');
-        document.getElementById('adminSettingsBtn').onclick=()=>{ this.loadSettingsUI(); this.showModal('settingsModal'); };
-        document.getElementById('saveSettingsBtn').onclick=()=>this.saveSettings();
-        document.querySelectorAll('.close-modal').forEach(b=>{ b.onclick=()=>{ const m=b.closest('.modal'); if(m) this.hideModal(m.id); }; });
-        document.querySelectorAll('.modal').forEach(m=>{ m.onclick=(e)=>{ if(e.target===m) this.hideModal(m.id); }; });
-        document.addEventListener('keydown', e=>{ if(e.key==='Escape') document.querySelectorAll('.modal.show').forEach(m=>this.hideModal(m.id)); });
+        const cancelStatusBtn = document.getElementById('cancelStatusBtn');
+        if (cancelStatusBtn) cancelStatusBtn.onclick = function() { app.hideModal('statusModal'); };
+
+        const submitReplyBtn = document.getElementById('submitReplyBtn');
+        if (submitReplyBtn) submitReplyBtn.onclick = function() { app.submitReply(); };
+
+        const cancelReplyBtn = document.getElementById('cancelReplyBtn');
+        if (cancelReplyBtn) cancelReplyBtn.onclick = function() { app.hideModal('replyModal'); };
+
+        const saveEditBtn = document.getElementById('saveEditBtn');
+        if (saveEditBtn) saveEditBtn.onclick = function() { app.saveEdit(); };
+
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        if (cancelEditBtn) cancelEditBtn.onclick = function() { app.hideModal('editSuggestionModal'); };
+
+        const confirmAction = document.getElementById('confirmAction');
+        if (confirmAction) confirmAction.onclick = function() { app.executeConfirm(); };
+
+        const cancelAction = document.getElementById('cancelAction');
+        if (cancelAction) cancelAction.onclick = function() { app.hideModal('confirmModal'); };
+
+        const adminSettingsBtn = document.getElementById('adminSettingsBtn');
+        if (adminSettingsBtn) adminSettingsBtn.onclick = function() { app.loadSettingsUI(); app.showModal('settingsModal'); };
+
+        const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+        if (saveSettingsBtn) saveSettingsBtn.onclick = function() { app.saveSettings(); };
+
+        document.querySelectorAll('.close-modal').forEach(function(b) {
+          b.onclick = function() {
+            const m = b.closest('.modal');
+            if (m) app.hideModal(m.id);
+          };
+        });
+
+        document.querySelectorAll('.modal').forEach(function(m) {
+          m.onclick = function(e) {
+            if (e.target === m) app.hideModal(m.id);
+          };
+        });
+
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            document.querySelectorAll('.modal.show').forEach(function(m) { app.hideModal(m.id); });
+          }
+        });
       }
 
-      async handleSubmit(e){
+      async handleSubmit(e) {
         e.preventDefault();
-        const btn=document.getElementById('submitBtn'); const orig=btn.innerHTML; 
-        btn.innerHTML='<div style="width:18px;height:18px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.7s linear infinite;"></div>'; 
-        btn.disabled=true;
-        const title=document.getElementById('suggestionTitle').value.trim(); 
-        const desc=document.getElementById('suggestionDescription').value.trim();
-        if(!title||!desc){ this.toast('Error','Title & description required','error'); btn.innerHTML=orig; btn.disabled=false; return; }
-        const data={ 
-          title, 
-          description:desc, 
-          category:document.getElementById('categorySelect').value||'general', 
-          department:document.getElementById('departmentSelect').value||'General', 
-          location:document.getElementById('location').value||'Campus', 
-          contactInfo:document.getElementById('contactInfo').value||'', 
-          date:new Date().toISOString(), 
-          votes:0, 
-          dislikes:0, 
-          status:'pending', 
-          userId:this.currentUser?this.currentUser.uid:'anonymous', 
-          userEmail:this.currentUser?this.currentUser.email:null, 
-          adminReply:null, 
-          lastUpdated:new Date().toISOString(),
+        const btn = document.getElementById('submitBtn');
+        if (!btn) return;
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<div style="width:18px;height:18px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.7s linear infinite;"></div>';
+        btn.disabled = true;
+        const title = document.getElementById('suggestionTitle').value.trim();
+        const desc = document.getElementById('suggestionDescription').value.trim();
+        if (!title || !desc) {
+          this.toast('Error', 'Title & description required', 'error');
+          btn.innerHTML = orig;
+          btn.disabled = false;
+          return;
+        }
+        const data = {
+          title: title,
+          description: desc,
+          category: document.getElementById('categorySelect').value || 'general',
+          department: document.getElementById('departmentSelect').value || 'General',
+          location: document.getElementById('location').value || 'Campus',
+          contactInfo: document.getElementById('contactInfo').value || '',
+          date: new Date().toISOString(),
+          votes: 0,
+          dislikes: 0,
+          status: 'pending',
+          userId: this.currentUser ? this.currentUser.uid : 'anonymous',
+          userEmail: this.currentUser ? this.currentUser.email : null,
+          adminReply: null,
+          lastUpdated: new Date().toISOString(),
           deviceId: DEVICE_ID
         };
-        try{ 
-          const ref=await db.collection("suggestions").add(data); 
-          const newData = { ...data, id: ref.id };
+        try {
+          const ref = await db.collection("suggestions").add(data);
+          const newData = Object.assign({}, data, { id: ref.id });
           this.suggestions.unshift(newData);
-          if(this.currentUser) this.userSuggestions.add(ref.id); 
+          if (this.currentUser) this.userSuggestions.add(ref.id);
           this.updateHistory(newData);
-          e.target.reset(); 
-          this.toast('Success!','Suggestion submitted','success'); 
-          this.renderAll(); 
-        } catch(err){ 
-          this.toast('Error',err.message,'error'); 
-        } finally{ 
-          btn.innerHTML=orig; 
-          btn.disabled=false; 
+          e.target.reset();
+          this.toast('Success!', 'Suggestion submitted', 'success');
+          this.renderAll();
+        } catch(err) {
+          this.toast('Error', err.message, 'error');
+        } finally {
+          btn.innerHTML = orig;
+          btn.disabled = false;
         }
       }
 
-      // ========== VOTE/UNVOTE (like & dislike toggle) ==========
-      async handleVote(id, type){
-        // type: 'like' or 'dislike'
+      async handleVote(id, type) {
         const state = getVoteState();
         const key = type === 'like' ? 'likes' : 'dislikes';
         const oppositeKey = type === 'like' ? 'dislikes' : 'likes';
-        
-        // If already voted with same type -> UNVOTE (remove)
+
         if (state[key][id]) {
-          // unvote
           delete state[key][id];
           setVoteState(state);
-          // update local count
-          const s = this.suggestions.find(x => x.id === id);
+          const s = this.suggestions.find(function(x) { return x.id === id; });
           if (s) {
             if (type === 'like') s.votes = Math.max(0, (s.votes || 0) - 1);
             else s.dislikes = Math.max(0, (s.dislikes || 0) - 1);
@@ -456,20 +621,16 @@
           if (this.studentHistory[id]) {
             if (type === 'like') this.studentHistory[id].votes = Math.max(0, (this.studentHistory[id].votes || 0) - 1);
             else this.studentHistory[id].dislikes = Math.max(0, (this.studentHistory[id].dislikes || 0) - 1);
-            localStorage.setItem('studentHistory_' + DEVICE_ID, JSON.stringify(this.studentHistory));
+            this.saveHistory();
           }
           this.renderAll();
-          // also update firebase in background
           this.updateFirebaseVote(id, type, -1);
           return;
         }
 
-        // If user already voted the opposite type, remove that vote first (toggle behavior)
         if (state[oppositeKey][id]) {
-          // remove opposite vote
           delete state[oppositeKey][id];
-          // decrease opposite count locally
-          const s = this.suggestions.find(x => x.id === id);
+          const s = this.suggestions.find(function(x) { return x.id === id; });
           if (s) {
             if (type === 'like') s.dislikes = Math.max(0, (s.dislikes || 0) - 1);
             else s.votes = Math.max(0, (s.votes || 0) - 1);
@@ -477,16 +638,14 @@
           if (this.studentHistory[id]) {
             if (type === 'like') this.studentHistory[id].dislikes = Math.max(0, (this.studentHistory[id].dislikes || 0) - 1);
             else this.studentHistory[id].votes = Math.max(0, (this.studentHistory[id].votes || 0) - 1);
-            localStorage.setItem('studentHistory_' + DEVICE_ID, JSON.stringify(this.studentHistory));
+            this.saveHistory();
           }
-          // update firebase for opposite in background
           this.updateFirebaseVote(id, oppositeKey === 'likes' ? 'like' : 'dislike', -1);
         }
 
-        // Now add the new vote
         state[key][id] = true;
         setVoteState(state);
-        const s = this.suggestions.find(x => x.id === id);
+        const s = this.suggestions.find(function(x) { return x.id === id; });
         if (s) {
           if (type === 'like') s.votes = (s.votes || 0) + 1;
           else s.dislikes = (s.dislikes || 0) + 1;
@@ -494,381 +653,458 @@
         if (this.studentHistory[id]) {
           if (type === 'like') this.studentHistory[id].votes = (this.studentHistory[id].votes || 0) + 1;
           else this.studentHistory[id].dislikes = (this.studentHistory[id].dislikes || 0) + 1;
-          localStorage.setItem('studentHistory_' + DEVICE_ID, JSON.stringify(this.studentHistory));
+          this.saveHistory();
         }
         this.renderAll();
         this.updateFirebaseVote(id, type, 1);
       }
 
-      // Background firebase update
       async updateFirebaseVote(id, type, delta) {
         const field = type === 'like' ? 'votes' : 'dislikes';
         try {
           const ref = db.collection("suggestions").doc(id);
-          await db.runTransaction(async (transaction) => {
+          await db.runTransaction(async function(transaction) {
             const doc = await transaction.get(ref);
             if (!doc.exists) return;
             const current = doc.data()[field] || 0;
             transaction.update(ref, { [field]: Math.max(0, current + delta) });
           });
+        } catch(e) {}
+      }
+
+      async changeStatus(status) {
+        try {
+          await db.collection("suggestions").doc(this.selectedId).update({
+            status: status,
+            lastUpdated: new Date().toISOString(),
+            updatedBy: this.currentUser ? this.currentUser.email : 'admin'
+          });
+          const s = this.suggestions.find(function(x) { return x.id === app.selectedId; });
+          if (s) s.status = status;
+          if (this.studentHistory[this.selectedId]) {
+            this.studentHistory[this.selectedId].status = status;
+            this.saveHistory();
+          }
+          this.hideModal('statusModal');
+          this.toast('Status updated', 'Marked as ' + status, 'success');
+          this.renderAll();
         } catch(e) {
-          // If firebase fails, we already updated local, so ignore
+          this.toast('Error', 'Status update failed', 'error');
         }
       }
 
-      async changeStatus(status){
-        try{ 
-          await db.collection("suggestions").doc(this.selectedId).update({ status, lastUpdated:new Date().toISOString(), updatedBy:this.currentUser?this.currentUser.email:'admin' }); 
-          const s=this.suggestions.find(x=>x.id===this.selectedId); 
-          if(s) s.status=status;
-          if(this.studentHistory[this.selectedId]) {
-            this.studentHistory[this.selectedId].status = status;
-            localStorage.setItem('studentHistory_' + DEVICE_ID, JSON.stringify(this.studentHistory));
-          }
-          this.hideModal('statusModal'); 
-          this.toast('Status updated',`Marked as ${status}`,'success'); 
-          this.renderAll(); 
-        } catch(e){ this.toast('Error','Status update failed','error'); }
-      }
-
-      async submitReply(){
-        const text=document.getElementById('adminReply').value.trim(); if(!text){ this.toast('Error','Reply cannot be empty','error'); return; }
-        try{ 
-          const reply={ text, date:new Date().toISOString(), repliedBy:this.currentUser?this.currentUser.email:'admin' }; 
-          await db.collection("suggestions").doc(this.selectedId).update({ adminReply:reply, lastUpdated:new Date().toISOString() }); 
-          const s=this.suggestions.find(x=>x.id===this.selectedId); 
-          if(s) s.adminReply=reply;
-          if(this.studentHistory[this.selectedId]) {
+      async submitReply() {
+        const text = document.getElementById('adminReply').value.trim();
+        if (!text) {
+          this.toast('Error', 'Reply cannot be empty', 'error');
+          return;
+        }
+        try {
+          const reply = { text: text, date: new Date().toISOString(), repliedBy: this.currentUser ? this.currentUser.email : 'admin' };
+          await db.collection("suggestions").doc(this.selectedId).update({
+            adminReply: reply,
+            lastUpdated: new Date().toISOString()
+          });
+          const s = this.suggestions.find(function(x) { return x.id === app.selectedId; });
+          if (s) s.adminReply = reply;
+          if (this.studentHistory[this.selectedId]) {
             this.studentHistory[this.selectedId].adminReply = reply;
-            localStorage.setItem('studentHistory_' + DEVICE_ID, JSON.stringify(this.studentHistory));
+            this.saveHistory();
           }
-          this.hideModal('replyModal'); 
-          this.toast('Reply sent','Response posted','success'); 
-          this.renderAll(); 
-        } catch(e){ this.toast('Error','Reply failed','error'); }
+          this.hideModal('replyModal');
+          this.toast('Reply sent', 'Response posted', 'success');
+          this.renderAll();
+        } catch(e) {
+          this.toast('Error', 'Reply failed', 'error');
+        }
       }
 
-      showEditModal(id){
-        const s=this.suggestions.find(x=>x.id===id)||this.studentHistory[id]; 
-        if(!s){ this.toast('Error','Not found','error'); return; }
-        const mins=(Date.now()-new Date(s.date).getTime())/60000; 
-        if(mins>this.settings.allowEditWithin){ this.toast('Edit expired',`Only ${this.settings.allowEditWithin} min allowed`,'warning'); return; }
-        this.selectedId=id; 
-        document.getElementById('editTitle').value=s.title||''; 
-        document.getElementById('editDescription').value=s.description||''; 
-        const rem=Math.max(0,this.settings.allowEditWithin-mins); 
-        document.getElementById('editTimeRemaining').textContent=`${Math.floor(rem)} min${Math.floor(rem)!==1?'s':''} left to edit`; 
+      showEditModal(id) {
+        const s = this.suggestions.find(function(x) { return x.id === id; }) || this.studentHistory[id];
+        if (!s) {
+          this.toast('Error', 'Not found', 'error');
+          return;
+        }
+        const mins = (Date.now() - new Date(s.date).getTime()) / 60000;
+        if (mins > this.settings.allowEditWithin) {
+          this.toast('Edit expired', 'Only ' + this.settings.allowEditWithin + ' min allowed', 'warning');
+          return;
+        }
+        this.selectedId = id;
+        document.getElementById('editTitle').value = s.title || '';
+        document.getElementById('editDescription').value = s.description || '';
+        const rem = Math.max(0, this.settings.allowEditWithin - mins);
+        document.getElementById('editTimeRemaining').textContent = Math.floor(rem) + ' min' + (Math.floor(rem) !== 1 ? 's' : '') + ' left to edit';
         this.showModal('editSuggestionModal');
       }
 
-      async saveEdit(){
-        const title=document.getElementById('editTitle').value.trim(); 
-        const desc=document.getElementById('editDescription').value.trim(); 
-        if(!title||!desc){ this.toast('Error','Fill all fields','error'); return; }
-        try{ 
-          await db.collection("suggestions").doc(this.selectedId).update({ title, description:desc, lastUpdated:new Date().toISOString() }); 
-          const s=this.suggestions.find(x=>x.id===this.selectedId); 
-          if(s){ s.title=title; s.description=desc; } 
-          if(this.studentHistory[this.selectedId]){ 
-            this.studentHistory[this.selectedId].title=title; 
-            this.studentHistory[this.selectedId].description=desc; 
-            localStorage.setItem('studentHistory_' + DEVICE_ID, JSON.stringify(this.studentHistory)); 
-          } 
-          this.hideModal('editSuggestionModal'); 
-          this.toast('Updated','Suggestion updated','success'); 
-          this.renderAll(); 
-        } catch(e){ this.toast('Error','Update failed','error'); }
+      async saveEdit() {
+        const title = document.getElementById('editTitle').value.trim();
+        const desc = document.getElementById('editDescription').value.trim();
+        if (!title || !desc) {
+          this.toast('Error', 'Fill all fields', 'error');
+          return;
+        }
+        try {
+          await db.collection("suggestions").doc(this.selectedId).update({
+            title: title,
+            description: desc,
+            lastUpdated: new Date().toISOString()
+          });
+          const s = this.suggestions.find(function(x) { return x.id === app.selectedId; });
+          if (s) { s.title = title; s.description = desc; }
+          if (this.studentHistory[this.selectedId]) {
+            this.studentHistory[this.selectedId].title = title;
+            this.studentHistory[this.selectedId].description = desc;
+            this.saveHistory();
+          }
+          this.hideModal('editSuggestionModal');
+          this.toast('Updated', 'Suggestion updated', 'success');
+          this.renderAll();
+        } catch(e) {
+          this.toast('Error', 'Update failed', 'error');
+        }
       }
 
-      showDeleteConfirm(id){ 
-        this.selectedId=id; 
-        const s=this.suggestions.find(x=>x.id===id); 
-        document.getElementById('modalTitle').textContent='Delete Suggestion'; 
-        document.getElementById('modalText').textContent=`Delete "${s?s.title:'this'}" permanently?`; 
-        this.showModal('confirmModal'); 
-      }
-      
-      async executeConfirm(){ 
-        try{ 
-          await db.collection("suggestions").doc(this.selectedId).delete(); 
-          this.suggestions=this.suggestions.filter(x=>x.id!==this.selectedId); 
-          delete this.studentHistory[this.selectedId]; 
-          localStorage.setItem('studentHistory_' + DEVICE_ID, JSON.stringify(this.studentHistory)); 
-          this.userSuggestions.delete(this.selectedId); 
-          this.hideModal('confirmModal'); 
-          this.toast('Deleted','Suggestion removed','success'); 
-          this.renderAll(); 
-        } catch(e){ this.toast('Error','Delete failed','error'); }
+      showDeleteConfirm(id) {
+        this.selectedId = id;
+        const s = this.suggestions.find(function(x) { return x.id === id; });
+        document.getElementById('modalTitle').textContent = 'Delete Suggestion';
+        document.getElementById('modalText').textContent = 'Delete "' + (s ? s.title : 'this') + '" permanently?';
+        this.showModal('confirmModal');
       }
 
-      async handleLogin(){ 
-        const email=document.getElementById('emailInput').value; 
-        const pass=document.getElementById('passwordInput').value; 
-        const err=document.getElementById('loginError'); 
-        err.style.display='none'; 
-        try{ 
-          await auth.signInWithEmailAndPassword(email,pass); 
-          this.hideModal('loginModal'); 
-          this.toast('Welcome','Logged in as admin','success'); 
-          document.getElementById('emailInput').value=''; 
-          document.getElementById('passwordInput').value=''; 
-        } catch(e){ 
-          err.textContent=e.message; 
-          err.style.display='block'; 
-          document.getElementById('passwordInput').value=''; 
-        } 
-      }
-      
-      async logout(){ 
-        try{ await auth.signOut(); this.toast('Logged out','','info'); } 
-        catch(e){ this.toast('Error','Logout failed','error'); } 
+      async executeConfirm() {
+        try {
+          await db.collection("suggestions").doc(this.selectedId).delete();
+          this.suggestions = this.suggestions.filter(function(x) { return x.id !== app.selectedId; });
+          delete this.studentHistory[this.selectedId];
+          this.saveHistory();
+          this.userSuggestions.delete(this.selectedId);
+          this.hideModal('confirmModal');
+          this.toast('Deleted', 'Suggestion removed', 'success');
+          this.renderAll();
+        } catch(e) {
+          this.toast('Error', 'Delete failed', 'error');
+        }
       }
 
-      handleFilter(e){ 
-        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); 
-        e.target.classList.add('active'); 
-        this.currentFilter=e.target.dataset.filter; 
-        this.renderSuggestions(); 
+      async handleLogin() {
+        const email = document.getElementById('emailInput').value;
+        const pass = document.getElementById('passwordInput').value;
+        const err = document.getElementById('loginError');
+        err.style.display = 'none';
+        try {
+          await auth.signInWithEmailAndPassword(email, pass);
+          this.hideModal('loginModal');
+          this.toast('Welcome', 'Logged in as admin', 'success');
+          document.getElementById('emailInput').value = '';
+          document.getElementById('passwordInput').value = '';
+        } catch(e) {
+          err.textContent = e.message;
+          err.style.display = 'block';
+          document.getElementById('passwordInput').value = '';
+        }
       }
 
-      renderAll(){ 
-        this.renderSuggestions(); 
-        this.renderHistory(); 
-        this.updateStats(); 
-        this.updateUI(); 
+      async logout() {
+        try {
+          await auth.signOut();
+          this.toast('Logged out', '', 'info');
+        } catch(e) {
+          this.toast('Error', 'Logout failed', 'error');
+        }
       }
 
-      renderSuggestions(){
-        const list=document.getElementById('suggestionsList'); 
-        const empty=document.getElementById('emptyState');
-        let filtered=[...this.suggestions];
-        if(this.currentFilter!=='all') filtered=filtered.filter(s=>s.status===this.currentFilter);
-        if(!this.isAdmin) filtered=filtered.filter(s=>(s.userId&&this.userSuggestions.has(s.id))||s.status==='approved'||s.status==='implemented');
-        const cnt=document.getElementById('displayCount').value; 
-        if(cnt!=='all'&&filtered.length>parseInt(cnt)) filtered=filtered.slice(0,parseInt(cnt));
-        if(filtered.length===0){ list.innerHTML=''; empty.style.display='block'; return; } 
-        empty.style.display='none';
-        list.innerHTML=filtered.map(s=>this.cardHTML(s)).join('');
+      handleFilter(e) {
+        document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+        e.target.classList.add('active');
+        this.currentFilter = e.target.dataset.filter;
+        this.renderSuggestions();
+      }
+
+      renderAll() {
+        this.renderSuggestions();
+        this.renderHistory();
+        this.updateStats();
+        this.updateUI();
+      }
+
+      renderSuggestions() {
+        const list = document.getElementById('suggestionsList');
+        const empty = document.getElementById('emptyState');
+        let filtered = this.suggestions.slice();
+        if (this.currentFilter !== 'all') {
+          filtered = filtered.filter(function(s) { return s.status === app.currentFilter; });
+        }
+        if (!this.isAdmin) {
+          filtered = filtered.filter(function(s) {
+            return (s.userId && app.userSuggestions.has(s.id)) || s.status === 'approved' || s.status === 'implemented';
+          });
+        }
+        const cnt = document.getElementById('displayCount').value;
+        if (cnt !== 'all' && filtered.length > parseInt(cnt)) {
+          filtered = filtered.slice(0, parseInt(cnt));
+        }
+        if (filtered.length === 0) {
+          list.innerHTML = '';
+          empty.style.display = 'block';
+          return;
+        }
+        empty.style.display = 'none';
+        list.innerHTML = filtered.map(function(s) { return app.cardHTML(s); }).join('');
         this.attachEvents();
       }
 
-      cardHTML(s){
-        const date=new Date(s.date); 
-        const dStr=date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-        const status=s.status||'pending'; 
-        const isOwn=this.userSuggestions.has(s.id); 
+      cardHTML(s) {
+        const date = new Date(s.date);
+        const dStr = date.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+        const status = s.status || 'pending';
+        const isOwn = this.userSuggestions.has(s.id);
         const liked = this.voteState.likes[s.id] || false;
         const disliked = this.voteState.dislikes[s.id] || false;
-        return `<div class="suggestion-card ${status}" data-id="${s.id}">
-          <div class="suggestion-header"><span class="status-badge ${status}">${status}</span><div>${isOwn?'<span class="private-badge"><i class="fas fa-user"></i> Yours</span>':''} <span style="font-size:0.65rem;color:var(--gray);"><i class="far fa-clock"></i> ${dStr}</span></div></div>
-          <div class="suggestion-title">${this.esc(s.title)}</div>
-          <div class="suggestion-content">${this.esc(s.description)}</div>
-          <div class="suggestion-details"><span><i class="fas fa-tag"></i> ${this.esc(s.category||'General')}</span><span><i class="fas fa-map-marker-alt"></i> ${this.esc(s.location||'Campus')}</span>${s.contactInfo?`<span><i class="fas fa-envelope"></i> ${this.esc(s.contactInfo)}</span>`:''}</div>
-          ${s.adminReply?this.replyHTML(s.adminReply):''}
-          <div class="suggestion-footer"><div class="suggestion-stats">
-            <button class="vote-btn ${liked?'voted':''}" data-id="${s.id}" data-type="like"><i class="fas fa-thumbs-up"></i> <span>${s.votes||0}</span></button>
-            <button class="vote-btn ${disliked?'disliked':''}" data-id="${s.id}" data-type="dislike"><i class="fas fa-thumbs-down"></i> <span>${s.dislikes||0}</span></button>
-          </div>
-          ${this.isAdmin?`<div class="admin-actions"><button class="action-btn reply-btn" data-id="${s.id}"><i class="fas fa-reply"></i></button><button class="action-btn status-btn" data-id="${s.id}"><i class="fas fa-exchange-alt"></i></button><button class="action-btn delete-btn" data-id="${s.id}"><i class="fas fa-trash"></i></button></div>`:''}
-          </div></div>`;
+        return '<div class="suggestion-card ' + status + '" data-id="' + s.id + '">' +
+          '<div class="suggestion-header"><span class="status-badge ' + status + '">' + status + '</span><div>' +
+          (isOwn ? '<span class="private-badge"><i class="fas fa-user"></i> Yours</span>' : '') +
+          ' <span style="font-size:0.65rem;color:var(--gray);"><i class="far fa-clock"></i> ' + dStr + '</span></div></div>' +
+          '<div class="suggestion-title">' + this.esc(s.title) + '</div>' +
+          '<div class="suggestion-content">' + this.esc(s.description) + '</div>' +
+          '<div class="suggestion-details"><span><i class="fas fa-tag"></i> ' + this.esc(s.category || 'General') + '</span><span><i class="fas fa-map-marker-alt"></i> ' + this.esc(s.location || 'Campus') + '</span>' +
+          (s.contactInfo ? '<span><i class="fas fa-envelope"></i> ' + this.esc(s.contactInfo) + '</span>' : '') + '</div>' +
+          (s.adminReply ? this.replyHTML(s.adminReply) : '') +
+          '<div class="suggestion-footer"><div class="suggestion-stats">' +
+          '<button class="vote-btn ' + (liked ? 'voted' : '') + '" data-id="' + s.id + '" data-type="like"><i class="fas fa-thumbs-up"></i> <span>' + (s.votes || 0) + '</span></button>' +
+          '<button class="vote-btn ' + (disliked ? 'disliked' : '') + '" data-id="' + s.id + '" data-type="dislike"><i class="fas fa-thumbs-down"></i> <span>' + (s.dislikes || 0) + '</span></button>' +
+          '</div>' +
+          (this.isAdmin ? '<div class="admin-actions"><button class="action-btn reply-btn" data-id="' + s.id + '"><i class="fas fa-reply"></i></button><button class="action-btn status-btn" data-id="' + s.id + '"><i class="fas fa-exchange-alt"></i></button><button class="action-btn delete-btn" data-id="' + s.id + '"><i class="fas fa-trash"></i></button></div>' : '') +
+          '</div></div>';
       }
 
-      replyHTML(r){ 
-        const d=new Date(r.date); 
-        const ds=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}); 
-        return `<div class="reply-section"><div class="reply-header"><i class="fas fa-comment-dots"></i> Admin</div><div class="reply-content">${this.esc(r.text)}</div><div class="reply-meta">${this.esc(r.repliedBy)} · ${ds}</div></div>`; 
-      }
-      
-      esc(str){ 
-        if(!str)return ''; 
-        return str.replace(/[&<>"]/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[m]||m)); 
+      replyHTML(r) {
+        const d = new Date(r.date);
+        const ds = d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit'});
+        return '<div class="reply-section"><div class="reply-header"><i class="fas fa-comment-dots"></i> Admin</div><div class="reply-content">' + this.esc(r.text) + '</div><div class="reply-meta">' + this.esc(r.repliedBy) + ' · ' + ds + '</div></div>';
       }
 
-      attachEvents(){
-        document.querySelectorAll('.vote-btn').forEach(b=>{ 
-          b.onclick=()=>{ 
-            const id=b.closest('.suggestion-card').dataset.id; 
-            const type=b.dataset.type; 
-            this.handleVote(id, type); 
-          }; 
+      esc(str) {
+        if (!str) return '';
+        return str.replace(/[&<>"]/g, function(m) {
+          return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' })[m] || m;
         });
-        if(this.isAdmin){
-          document.querySelectorAll('.reply-btn').forEach(b=>{ 
-            b.onclick=()=>{ 
-              this.selectedId=b.dataset.id; 
-              const s=this.suggestions.find(x=>x.id===this.selectedId); 
-              document.getElementById('replyModalText').textContent=`Reply: "${s?s.title:''}"`; 
-              document.getElementById('adminReply').value=s?.adminReply?.text||''; 
-              this.showModal('replyModal'); 
-            }; 
+      }
+
+      attachEvents() {
+        var self = this;
+        document.querySelectorAll('.vote-btn').forEach(function(b) {
+          b.onclick = function() {
+            var id = b.closest('.suggestion-card').dataset.id;
+            var type = b.dataset.type;
+            self.handleVote(id, type);
+          };
+        });
+        if (this.isAdmin) {
+          document.querySelectorAll('.reply-btn').forEach(function(b) {
+            b.onclick = function() {
+              self.selectedId = b.dataset.id;
+              var s = self.suggestions.find(function(x) { return x.id === self.selectedId; });
+              document.getElementById('replyModalText').textContent = 'Reply: "' + (s ? s.title : '') + '"';
+              document.getElementById('adminReply').value = (s && s.adminReply) ? s.adminReply.text : '';
+              self.showModal('replyModal');
+            };
           });
-          document.querySelectorAll('.status-btn').forEach(b=>{ 
-            b.onclick=()=>{ 
-              this.selectedId=b.dataset.id; 
-              const s=this.suggestions.find(x=>x.id===this.selectedId); 
-              document.getElementById('statusModalText').textContent=`Status for: "${s?s.title:''}"`; 
-              this.showModal('statusModal'); 
-            }; 
+          document.querySelectorAll('.status-btn').forEach(function(b) {
+            b.onclick = function() {
+              self.selectedId = b.dataset.id;
+              var s = self.suggestions.find(function(x) { return x.id === self.selectedId; });
+              document.getElementById('statusModalText').textContent = 'Status for: "' + (s ? s.title : '') + '"';
+              self.showModal('statusModal');
+            };
           });
-          document.querySelectorAll('.delete-btn').forEach(b=>{ 
-            b.onclick=()=>{ this.showDeleteConfirm(b.dataset.id); }; 
+          document.querySelectorAll('.delete-btn').forEach(function(b) {
+            b.onclick = function() {
+              self.showDeleteConfirm(b.dataset.id);
+            };
           });
         }
       }
 
-      renderHistory(){
-        const list=document.getElementById('studentHistoryList'); 
-        const empty=document.getElementById('emptyHistoryState');
-        if(this.isAdmin){ 
-          document.getElementById('historyCard').style.display='none'; 
-          return; 
+      renderHistory() {
+        const list = document.getElementById('studentHistoryList');
+        const empty = document.getElementById('emptyHistoryState');
+        if (this.isAdmin) {
+          document.getElementById('historyCard').style.display = 'none';
+          return;
         } else {
-          document.getElementById('historyCard').style.display='block';
+          document.getElementById('historyCard').style.display = 'block';
         }
-        
+
         const items = Object.values(this.studentHistory);
-        if(items.length===0){ 
-          list.innerHTML=''; 
-          empty.style.display='block'; 
-          return; 
-        } 
-        empty.style.display='none';
-        items.sort((a,b)=>new Date(b.date)-new Date(a.date));
-        list.innerHTML=items.map(item=>{
-          const d=new Date(item.date); 
-          const ds=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-          const mins=(Date.now()-new Date(item.date).getTime())/60000; 
-          const canEdit=mins<=this.settings.allowEditWithin; 
-          const rem=Math.max(0,this.settings.allowEditWithin-mins);
-          const status=item.status||'pending';
-          return `<div class="history-item"><div class="history-item-header"><span>${this.esc(item.title)}</span><span style="font-size:0.6rem;"><span class="status-badge ${status}">${status}</span> ${ds}</span></div><div class="history-item-content">${this.esc(item.description)}</div>${item.adminReply?this.replyHTML(item.adminReply):''}<button class="edit-btn" data-id="${item.id}" ${!canEdit?'disabled':''}><i class="fas fa-edit"></i> Edit ${canEdit?`(${Math.floor(rem)}m)`:'locked'}</button></div>`;
+        if (items.length === 0) {
+          list.innerHTML = '';
+          empty.style.display = 'block';
+          return;
+        }
+        empty.style.display = 'none';
+        items.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+        var self = this;
+        list.innerHTML = items.map(function(item) {
+          const d = new Date(item.date);
+          const ds = d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+          const mins = (Date.now() - new Date(item.date).getTime()) / 60000;
+          const canEdit = mins <= self.settings.allowEditWithin;
+          const rem = Math.max(0, self.settings.allowEditWithin - mins);
+          const status = item.status || 'pending';
+          return '<div class="history-item"><div class="history-item-header"><span>' + self.esc(item.title) + '</span><span style="font-size:0.6rem;"><span class="status-badge ' + status + '">' + status + '</span> ' + ds + '</span></div><div class="history-item-content">' + self.esc(item.description) + '</div>' + (item.adminReply ? self.replyHTML(item.adminReply) : '') + '<button class="edit-btn" data-id="' + item.id + '" ' + (!canEdit ? 'disabled' : '') + '><i class="fas fa-edit"></i> Edit ' + (canEdit ? '(' + Math.floor(rem) + 'm)' : 'locked') + '</button></div>';
         }).join('');
-        list.querySelectorAll('.edit-btn').forEach(b=>{ 
-          b.onclick=()=>{ this.showEditModal(b.dataset.id); }; 
+        list.querySelectorAll('.edit-btn').forEach(function(b) {
+          b.onclick = function() {
+            self.showEditModal(b.dataset.id);
+          };
         });
       }
 
-      updateStats(){
-        const t=this.suggestions.length; 
-        const p=this.suggestions.filter(s=>s.status==='pending').length; 
-        const a=this.suggestions.filter(s=>s.status==='approved').length; 
-        const i=this.suggestions.filter(s=>s.status==='implemented').length; 
-        const r=this.suggestions.filter(s=>s.status==='rejected').length; 
-        const v=this.suggestions.reduce((sum,s)=>sum+(s.votes||0),0);
-        document.getElementById('totalSuggestions').textContent=t; 
-        document.getElementById('pendingCount').textContent=p; 
-        document.getElementById('approvedCount').textContent=a; 
-        document.getElementById('implementedCount').textContent=i; 
-        document.getElementById('rejectedCount').textContent=r; 
-        document.getElementById('totalVotes').textContent=v;
+      updateStats() {
+        const t = this.suggestions.length;
+        const p = this.suggestions.filter(function(s) { return s.status === 'pending'; }).length;
+        const a = this.suggestions.filter(function(s) { return s.status === 'approved'; }).length;
+        const i = this.suggestions.filter(function(s) { return s.status === 'implemented'; }).length;
+        const r = this.suggestions.filter(function(s) { return s.status === 'rejected'; }).length;
+        const v = this.suggestions.reduce(function(sum, s) { return sum + (s.votes || 0); }, 0);
+        document.getElementById('totalSuggestions').textContent = t;
+        document.getElementById('pendingCount').textContent = p;
+        document.getElementById('approvedCount').textContent = a;
+        document.getElementById('implementedCount').textContent = i;
+        document.getElementById('rejectedCount').textContent = r;
+        document.getElementById('totalVotes').textContent = v;
       }
 
-      updateHistory(s){ 
+      updateHistory(s) {
         if (s.deviceId !== DEVICE_ID) return;
         const key = s.id;
-        if(!key) return;
-        this.studentHistory[key] = { 
-          id: s.id, 
-          title: s.title, 
-          description: s.description, 
-          status: s.status||'pending', 
-          date: s.date, 
-          lastUpdated: s.lastUpdated||s.date, 
-          category: s.category, 
-          location: s.location, 
-          contactInfo: s.contactInfo, 
-          department: s.department, 
-          adminReply: s.adminReply, 
-          votes: s.votes||0, 
-          dislikes: s.dislikes||0,
+        if (!key) return;
+        this.studentHistory[key] = {
+          id: s.id,
+          title: s.title,
+          description: s.description,
+          status: s.status || 'pending',
+          date: s.date,
+          lastUpdated: s.lastUpdated || s.date,
+          category: s.category,
+          location: s.location,
+          contactInfo: s.contactInfo,
+          department: s.department,
+          adminReply: s.adminReply,
+          votes: s.votes || 0,
+          dislikes: s.dislikes || 0,
           deviceId: s.deviceId
-        }; 
-        localStorage.setItem('studentHistory_' + DEVICE_ID, JSON.stringify(this.studentHistory)); 
-      }
-      
-      async loadUserSuggestions(uid){ 
-        try{ 
-          const snap=await db.collection("suggestions").where("userId","==",uid).get(); 
-          this.userSuggestions.clear(); 
-          snap.forEach(d=>this.userSuggestions.add(d.id)); 
-        } catch(e){} 
+        };
+        this.saveHistory();
       }
 
-      showUser(user){ 
-        const info=document.getElementById('userInfo'); 
-        info.style.display='flex'; 
-        document.getElementById('userName').textContent='Admin'; 
-        document.getElementById('userEmail').textContent=user.email; 
-        document.getElementById('userAvatar').textContent=user.email.charAt(0).toUpperCase(); 
+      async loadUserSuggestions(uid) {
+        try {
+          const snap = await db.collection("suggestions").where("userId", "==", uid).get();
+          this.userSuggestions.clear();
+          snap.forEach(function(d) { app.userSuggestions.add(d.id); });
+        } catch(e) {}
       }
-      
-      hideUser(){ 
-        document.getElementById('userInfo').style.display='none'; 
+
+      showUser(user) {
+        const info = document.getElementById('userInfo');
+        info.style.display = 'flex';
+        document.getElementById('userName').textContent = 'Admin';
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
       }
-      
-      updateUI(){
-        document.getElementById('loginBtn').style.display=this.isAdmin?'none':'flex';
-        document.getElementById('logoutBtn').style.display=this.isAdmin?'flex':'none';
-        document.getElementById('adminSettingsBtn').style.display=this.isAdmin?'flex':'none';
-        document.getElementById('statsCard').style.display=(this.isAdmin&&this.settings.showStatistics)?'block':'none';
-        if(this.isAdmin){
-          const body=document.getElementById('submitBody');
-          if(!this.settings.showSubmitForm) { 
-            body.classList.remove('open'); 
-            document.getElementById('submitIcon').className='fas fa-chevron-right'; 
-          } else { 
-            body.classList.add('open'); 
-            document.getElementById('submitIcon').className='fas fa-chevron-down'; 
+
+      hideUser() {
+        document.getElementById('userInfo').style.display = 'none';
+      }
+
+      updateUI() {
+        document.getElementById('loginBtn').style.display = this.isAdmin ? 'none' : 'flex';
+        document.getElementById('logoutBtn').style.display = this.isAdmin ? 'flex' : 'none';
+        document.getElementById('adminSettingsBtn').style.display = this.isAdmin ? 'flex' : 'none';
+        document.getElementById('statsCard').style.display = (this.isAdmin && this.settings.showStatistics) ? 'block' : 'none';
+        if (this.isAdmin) {
+          const body = document.getElementById('submitBody');
+          if (!this.settings.showSubmitForm) {
+            body.classList.remove('open');
+            document.getElementById('submitIcon').className = 'fas fa-chevron-right';
+          } else {
+            body.classList.add('open');
+            document.getElementById('submitIcon').className = 'fas fa-chevron-down';
           }
         }
       }
 
-      loadSettingsUI(){ 
-        document.getElementById('emailNotifications').checked=this.settings.emailNotifications!==false; 
-        const mode=this.settings.displayMode||'all'; 
-        document.querySelectorAll('input[name="displayMode"]').forEach(el=>el.checked=el.value===mode); 
-        document.getElementById('showSubmitForm').checked=this.settings.showSubmitForm!==false; 
-        document.getElementById('showStatistics').checked=this.settings.showStatistics!==false; 
-        document.getElementById('allowEditWithin').value=this.settings.allowEditWithin||5; 
-      }
-      
-      saveSettings(){ 
-        this.settings.emailNotifications=document.getElementById('emailNotifications').checked; 
-        this.settings.displayMode=document.querySelector('input[name="displayMode"]:checked')?.value||'all'; 
-        this.settings.showSubmitForm=document.getElementById('showSubmitForm').checked; 
-        this.settings.showStatistics=document.getElementById('showStatistics').checked; 
-        this.settings.allowEditWithin=parseInt(document.getElementById('allowEditWithin').value)||5; 
-        localStorage.setItem('emailNotifications',this.settings.emailNotifications); 
-        localStorage.setItem('displayMode',this.settings.displayMode); 
-        localStorage.setItem('showSubmitForm',this.settings.showSubmitForm); 
-        localStorage.setItem('showStatistics',this.settings.showStatistics); 
-        localStorage.setItem('allowEditWithin',this.settings.allowEditWithin); 
-        this.hideModal('settingsModal'); 
-        this.updateUI(); 
-        this.toast('Settings saved','Preferences updated','success'); 
+      loadSettingsUI() {
+        document.getElementById('emailNotifications').checked = this.settings.emailNotifications !== false;
+        const mode = this.settings.displayMode || 'all';
+        document.querySelectorAll('input[name="displayMode"]').forEach(function(el) {
+          el.checked = el.value === mode;
+        });
+        document.getElementById('showSubmitForm').checked = this.settings.showSubmitForm !== false;
+        document.getElementById('showStatistics').checked = this.settings.showStatistics !== false;
+        document.getElementById('allowEditWithin').value = this.settings.allowEditWithin || 5;
       }
 
-      showModal(id){ 
-        const el=document.getElementById(id); 
-        if(el){ el.style.display='flex'; el.classList.add('show'); } 
+      saveSettings() {
+        this.settings.emailNotifications = document.getElementById('emailNotifications').checked;
+        var modeEl = document.querySelector('input[name="displayMode"]:checked');
+        this.settings.displayMode = modeEl ? modeEl.value : 'all';
+        this.settings.showSubmitForm = document.getElementById('showSubmitForm').checked;
+        this.settings.showStatistics = document.getElementById('showStatistics').checked;
+        this.settings.allowEditWithin = parseInt(document.getElementById('allowEditWithin').value) || 5;
+        try {
+          localStorage.setItem('emailNotifications', this.settings.emailNotifications);
+          localStorage.setItem('displayMode', this.settings.displayMode);
+          localStorage.setItem('showSubmitForm', this.settings.showSubmitForm);
+          localStorage.setItem('showStatistics', this.settings.showStatistics);
+          localStorage.setItem('allowEditWithin', this.settings.allowEditWithin);
+        } catch(e) {}
+        this.hideModal('settingsModal');
+        this.updateUI();
+        this.toast('Settings saved', 'Preferences updated', 'success');
       }
-      
-      hideModal(id){ 
-        const el=document.getElementById(id); 
-        if(el){ el.style.display='none'; el.classList.remove('show'); } 
-        if(id==='replyModal') document.getElementById('adminReply').value=''; 
-        if(id==='editSuggestionModal'){ document.getElementById('editTitle').value=''; document.getElementById('editDescription').value=''; } 
-        if(id==='loginModal') document.getElementById('loginError').style.display='none'; 
+
+      showModal(id) {
+        const el = document.getElementById(id);
+        if (el) { el.style.display = 'flex'; el.classList.add('show'); }
       }
-      
-      updateStatus(s){ 
-        const el=document.getElementById('firebaseStatus'); 
-        el.className=`firebase-status ${s}`; 
-        el.innerHTML=s==='connected'?'<i class="fas fa-circle"></i> Connected':s==='disconnected'?'<i class="fas fa-circle"></i> Offline':'<i class="fas fa-circle"></i> Connecting...'; 
+
+      hideModal(id) {
+        const el = document.getElementById(id);
+        if (el) { el.style.display = 'none'; el.classList.remove('show'); }
+        if (id === 'replyModal') document.getElementById('adminReply').value = '';
+        if (id === 'editSuggestionModal') {
+          document.getElementById('editTitle').value = '';
+          document.getElementById('editDescription').value = '';
+        }
+        if (id === 'loginModal') document.getElementById('loginError').style.display = 'none';
+      }
+
+      updateStatus(s) {
+        const el = document.getElementById('firebaseStatus');
+        el.className = 'firebase-status ' + s;
+        el.innerHTML = s === 'connected' ? '<i class="fas fa-circle"></i> Connected' :
+                       s === 'disconnected' ? '<i class="fas fa-circle"></i> Offline' :
+                       '<i class="fas fa-circle"></i> Connecting...';
       }
     }
 
-    document.addEventListener('DOMContentLoaded', ()=>{ window.app = new App(); });
-  </script>
+    // Initialize
+    var app = null;
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        app = new App();
+        window.app = app;
+        console.log('App initialized successfully!');
+      } catch(e) {
+        console.error('App initialization error:', e);
+        document.body.innerHTML = '<div style="padding:40px;text-align:center;color:red;"><h2>Error Loading App</h2><p>' + e.message + '</p><p style="font-size:12px;color:#666;">Please check your internet connection and try again.</p></div>';
+      }
+    });
+</script>
 </body>
 </html>
